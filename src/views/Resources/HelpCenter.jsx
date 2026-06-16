@@ -1,15 +1,12 @@
 import React, { useState } from 'react';
 import { 
   Search, 
-  HelpCircle, 
   BookOpen, 
   CreditCard, 
   Lock, 
   AlertTriangle, 
   User, 
-  Mail, 
-  FileText,
-  Plus,
+  Plus, 
   Minus
 } from 'lucide-react';
 
@@ -20,17 +17,17 @@ export default function HelpCenter({ setCurrentView, showToast }) {
   const categories = [
     { title: 'Getting Started', desc: 'Learn the basics and set up your account', icon: PlayIcon, action: 'signup' },
     { title: 'API Documentation', desc: 'Explore reference endpoints and SDKs', icon: BookOpen, action: 'documentation' },
-    { title: 'Billing & Plans', desc: 'Pricing plans, invoicing, and subscriptions', icon: CreditCard, action: 'home' },
+    { title: 'Billing & Plans', desc: 'Pricing plans, usage metrics, and subscriptions', icon: CreditCard, action: 'home' },
     { title: 'Security & Privacy', desc: 'SOC 2, GDPR, data retention policies', icon: Lock, action: 'about-us' },
-    { title: 'Troubleshooting', desc: 'Common issues, API errors, and upload fixes', icon: AlertTriangle, action: 'contact' },
+    { title: 'Troubleshooting', desc: 'Common issues, audio format errors, and transcribing timeouts', icon: AlertTriangle, action: 'contact' },
     { title: 'Account Management', desc: 'Profiles, billing details, and API keys', icon: User, action: 'signin' }
   ];
 
   const faqs = [
     { q: "How do I generate a new API key?", a: "Login to your dashboard, navigate to the API Keys section, and click on '+ New Key'. Make sure to copy the key and keep it secure; it will only be shown once." },
-    { q: "What is the maximum file upload size?", a: "The maximum file upload size is 25MB. If you have larger files, please optimize the PDF or split them into individual documents." },
+    { q: "What is the maximum audio file upload size?", a: "The maximum audio upload size is 25MB. We recommend using compressed audio formats like MP3 or OGG, and limiting audio clip durations to under 5 minutes for direct sandbox testing." },
     { q: "Is there a limit on concurrent API requests?", a: "Yes, rate limits depend on your plan. The Free tier is limited to 5 requests per minute, while Pro handles up to 50 requests per minute. Contact us for custom enterprise rate limits." },
-    { q: "Do you offer a sandbox environment?", a: "Yes, you can use our interactive Postman Console in the API Reference page to test API calls with mockup responses without burning document credits." }
+    { q: "Do you offer a sandbox environment?", a: "Yes, you can use our interactive API reference console page to test syntheses and transcribing requests without burning through your subscription audio seconds limits." }
   ];
 
   // Helper helper to dynamically map icon references
@@ -101,7 +98,7 @@ export default function HelpCenter({ setCurrentView, showToast }) {
         
         {filteredFaqs.length === 0 ? (
           <div style={styles.noResults}>
-            No articles found matching "{searchQuery}". Try searching for "API key" or "file size".
+            No articles found matching "{searchQuery}". Try searching for "API key" or "audio file".
           </div>
         ) : (
           <div style={styles.faqList}>

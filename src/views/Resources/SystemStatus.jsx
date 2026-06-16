@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import { 
   CheckCircle, 
   Clock, 
-  Activity, 
   Percent, 
-  AlertTriangle,
-  Calendar,
+  Calendar, 
   Bell
 } from 'lucide-react';
 
@@ -20,16 +18,16 @@ export default function SystemStatus({ showToast }) {
   };
 
   const services = [
-    { name: 'API Endpoints', status: 'Operational' },
-    { name: 'Document Processing', status: 'Operational' },
-    { name: 'Database Services', status: 'Operational' },
-    { name: 'Authentication API', status: 'Operational' },
-    { name: 'File Upload Storage', status: 'Operational' }
+    { name: 'TTS Neural Synthesis API', status: 'Operational' },
+    { name: 'STT Transcription API', status: 'Operational' },
+    { name: 'Voice Training & Custom Models', status: 'Operational' },
+    { name: 'Developer Portal Dashboard', status: 'Operational' },
+    { name: 'File Storage Bucket', status: 'Operational' }
   ];
 
   const incidents = [
     { title: 'Scheduled Database Maintenance', date: '2026-05-12', duration: '45 minutes', impact: 'None (Failover Active)', status: 'Resolved' },
-    { title: 'Minor API Upload Slowdown', date: '2026-04-20', duration: '20 minutes', impact: 'Degraded Performance', status: 'Resolved' }
+    { title: 'Minor API Voice Storage Slowdown', date: '2026-04-20', duration: '20 minutes', impact: 'Degraded Performance', status: 'Resolved' }
   ];
 
   return (
@@ -39,7 +37,7 @@ export default function SystemStatus({ showToast }) {
         <div style={styles.heroBanner}>
           <div style={styles.greenDot}></div>
           <h1 style={styles.heroTitle}>All Systems Operational</h1>
-          <p style={styles.heroSub}>As of June 14, 2026 at 7:22:21 PM UTC</p>
+          <p style={styles.heroSub}>As of June 16, 2026 at 09:12:00 UTC</p>
         </div>
 
         {/* Metrics Grid */}
@@ -145,7 +143,7 @@ export default function SystemStatus({ showToast }) {
               <p style={styles.subDesc}>Get automatic email notifications when system status alerts or maintenance changes occur.</p>
             </div>
           </div>
-          <form onSubmit={handleSubscribe} style={styles.subForm}>
+          <form onSubmit={handleSubscribe} className="status-sub-form" style={styles.subForm}>
             <input 
               type="email" 
               placeholder="you@email.com" 
@@ -327,13 +325,7 @@ const styles = {
     lineHeight: '1.4',
   },
   subForm: {
-    display: 'flex',
-    gap: '10px',
-    width: '100%',
-    maxWidth: '400px',
-    '@media (max-width: 600px)': {
-      maxWidth: '100%',
-    },
+    // Defined dynamically via index.css (.status-sub-form)
   },
   subInput: {
     flex: '1',

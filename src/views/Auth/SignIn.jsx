@@ -27,7 +27,7 @@ export default function SignIn({ setCurrentView, login, showToast }) {
 
     setIsSubmitting(true);
     
-    // Simulate server login timing matching video
+    // Simulate server login timing
     setTimeout(() => {
       setIsSubmitting(false);
       setLoginSuccess(true);
@@ -48,7 +48,7 @@ export default function SignIn({ setCurrentView, login, showToast }) {
     <div style={styles.page} className="animate-fade-in">
       <div style={styles.card} className="glass-card">
         <h2 style={styles.title}>Welcome Back</h2>
-        <p style={styles.sub}>Sign in to access your API dashboard</p>
+        <p style={styles.sub}>Sign in to access your Conversa API dashboard</p>
 
         <form onSubmit={handleSubmit} style={styles.form}>
           {/* Email input with autocomplete triggers */}
@@ -76,6 +76,7 @@ export default function SignIn({ setCurrentView, login, showToast }) {
                     key={em} 
                     onMouseDown={() => handleSuggestionClick(em)}
                     style={styles.suggestionItem}
+                    className="auth-suggestion-item"
                   >
                     {em}
                   </div>
@@ -102,6 +103,7 @@ export default function SignIn({ setCurrentView, login, showToast }) {
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)} 
                 style={styles.eyeBtn}
+                className="auth-eye-btn"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
@@ -114,7 +116,7 @@ export default function SignIn({ setCurrentView, login, showToast }) {
               <input type="checkbox" style={styles.checkbox} />
               <span>Remember me</span>
             </label>
-            <button type="button" onClick={() => showToast('Password reset link sent (simulated).', 'info')} style={styles.linkBtn}>
+            <button type="button" onClick={() => showToast('Password reset link sent (simulated).', 'info')} style={styles.linkBtn} className="auth-link-btn">
               Forgot password?
             </button>
           </div>
@@ -140,7 +142,7 @@ export default function SignIn({ setCurrentView, login, showToast }) {
 
         <div style={styles.footer}>
           Don't have an account?{' '}
-          <button onClick={() => setCurrentView('signup')} style={styles.linkBtn}>
+          <button onClick={() => setCurrentView('signup')} style={styles.linkBtn} className="auth-link-btn">
             Create one
           </button>
         </div>
@@ -223,9 +225,6 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     padding: '4px',
-    ':hover': {
-      color: 'var(--text-primary)',
-    }
   },
   suggestions: {
     position: 'absolute',
@@ -247,10 +246,6 @@ const styles = {
     cursor: 'pointer',
     textAlign: 'left',
     transition: 'var(--transition)',
-    ':hover': {
-      background: 'rgba(255,255,255,0.03)',
-      color: 'var(--text-primary)',
-    }
   },
   optionsRow: {
     display: 'flex',
@@ -277,10 +272,6 @@ const styles = {
     fontSize: 'inherit',
     fontWeight: '600',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--primary)',
-      textDecoration: 'underline',
-    }
   },
   successBanner: {
     background: 'var(--success-glow)',

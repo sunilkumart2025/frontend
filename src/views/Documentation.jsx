@@ -4,9 +4,6 @@ import {
   Copy, 
   Check, 
   ArrowRight, 
-  Play, 
-  FileText, 
-  Activity, 
   ShieldAlert, 
   ExternalLink,
   Code as CodeIcon,
@@ -46,7 +43,7 @@ export default function Documentation({ setCurrentView, showToast }) {
 
   return (
     <div style={styles.container}>
-      <div style={styles.layout}>
+      <div style={styles.layout} className="docs-grid-layout">
         {/* Left Sidebar */}
         <aside style={styles.sidebar}>
           <h3 style={styles.sidebarTitle}>Documentation</h3>
@@ -74,27 +71,28 @@ export default function Documentation({ setCurrentView, showToast }) {
             <div className="animate-fade-in">
               <h1 style={styles.docTitle}>Getting Started</h1>
               <p style={styles.docLead}>
-                Welcome to the FinanceAI Developer Portal. Integrate document processing capabilities into your stack in minutes.
+                Welcome to the Conversa AI Developer Portal. Integrate high-fidelity Text-to-Speech (TTS) and Speech-to-Text (STT) capabilities into your stack in minutes.
               </p>
 
               <div style={styles.sectionDivider}></div>
 
               <h2 style={styles.subTitle}>Base URL</h2>
               <p style={styles.docText}>
-                All requests are secure HTTPS endpoints relative to the following base address:
+                All secure HTTPS requests are relative to the following base endpoint:
               </p>
               
               <div style={styles.codeBlockWrapper}>
                 <div style={styles.codeBlockHeader}>
                   <span>Base endpoint URL</span>
                   <button 
-                    onClick={() => copyToClipboard('https://ocr.dexai.app/v1', 'Base URL')} 
+                    onClick={() => copyToClipboard('https://api.conversa.ai/v1', 'Base URL')} 
                     style={styles.copyBtn}
+                    className="doc-copy-btn"
                   >
-                    {copiedText === 'https://ocr.dexai.app/v1' ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
+                    {copiedText === 'https://api.conversa.ai/v1' ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
                   </button>
                 </div>
-                <pre style={styles.preCode}>https://ocr.dexai.app/v1</pre>
+                <pre style={styles.preCode}>https://api.conversa.ai/v1</pre>
               </div>
 
               <h2 style={styles.subTitle}>Quick Start Workflow</h2>
@@ -102,28 +100,28 @@ export default function Documentation({ setCurrentView, showToast }) {
                 <div style={styles.stepCard}>
                   <div style={styles.stepNum}>1</div>
                   <h4 style={styles.stepTitle}>Create Account</h4>
-                  <p style={styles.stepDesc}>Register a developer account online to start scanning.</p>
+                  <p style={styles.stepDesc}>Register a developer account to start building speech integrations.</p>
                 </div>
                 <div style={styles.stepCard}>
                   <div style={styles.stepNum}>2</div>
-                  <h4 style={styles.stepTitle}>Retrieve Key</h4>
-                  <p style={styles.stepDesc}>Generate a secure API token inside your personal dashboard.</p>
+                  <h4 style={styles.stepTitle}>Retrieve API Key</h4>
+                  <p style={styles.stepDesc}>Generate a secure token inside your personal dashboard.</p>
                 </div>
                 <div style={styles.stepCard}>
                   <div style={styles.stepNum}>3</div>
-                  <h4 style={styles.stepTitle}>Submit Files</h4>
-                  <p style={styles.stepDesc}>Make an HTTP request passing any PDF, JPEG or PNG statement.</p>
+                  <h4 style={styles.stepTitle}>Submit Audio/Text</h4>
+                  <p style={styles.stepDesc}>Synthesize text to speech, or transcribe speech logs to text.</p>
                 </div>
                 <div style={styles.stepCard}>
                   <div style={styles.stepNum}>4</div>
-                  <h4 style={styles.stepTitle}>Parse JSON</h4>
-                  <p style={styles.stepDesc}>Read the formatted response data mapping key values.</p>
+                  <h4 style={styles.stepTitle}>Parse Response</h4>
+                  <p style={styles.stepDesc}>Receive neural voice URLs or dialogue JSON outputs.</p>
                 </div>
               </div>
 
               {/* Callouts */}
               <div style={styles.ctaBox} className="glass-card">
-                <h4 style={styles.ctaBoxTitle}>Ready to start processing documents?</h4>
+                <h4 style={styles.ctaBoxTitle}>Ready to start processing voice tools?</h4>
                 <p style={styles.ctaBoxDesc}>Create your free account to get instant access to the API and developer dashboard tools.</p>
                 <div style={styles.ctaBoxActions}>
                   <button onClick={() => setCurrentView('signup')} className="btn btn-primary">
@@ -164,7 +162,7 @@ export default function Documentation({ setCurrentView, showToast }) {
               <div style={styles.warningBox}>
                 <ShieldAlert size={20} color="var(--warning)" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong>Security Reminder:</strong> Your production secret keys can write transactions. Do not share them on public version control platforms.
+                  <strong>Security Reminder:</strong> Your production secret keys authenticate requests. Do not share them on public version control platforms.
                 </div>
               </div>
 
@@ -174,16 +172,21 @@ export default function Documentation({ setCurrentView, showToast }) {
                 <div style={styles.codeBlockHeader}>
                   <span>cURL Command</span>
                   <button 
-                    onClick={() => copyToClipboard('curl -X POST https://ocr.dexai.app/v1/documents/process \\\n  -H "X-API-Key: YOUR_API_KEY" \\\n  -F "file=@document.pdf"', 'cURL Example')} 
+                    onClick={() => copyToClipboard('curl -X POST https://api.conversa.ai/v1/voice/tts \\\n  -H "X-API-Key: YOUR_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d \'{"text": "Hello, welcome to Conversa AI.", "voice_id": "en_male_neural_1"}\'', 'cURL Example')} 
                     style={styles.copyBtn}
+                    className="doc-copy-btn"
                   >
                     {copiedText.includes('curl') ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
                   </button>
                 </div>
                 <pre style={styles.preCode}>
-{`curl -X POST https://ocr.dexai.app/v1/documents/process \\
+{`curl -X POST https://api.conversa.ai/v1/voice/tts \\
   -H "X-API-Key: YOUR_API_KEY" \\
-  -F "file=@document.pdf"`}
+  -H "Content-Type: application/json" \\
+  -d '{
+    "text": "Hello, welcome to Conversa AI.",
+    "voice_id": "en_male_neural_1"
+  }'`}
                 </pre>
               </div>
             </div>
@@ -204,42 +207,45 @@ export default function Documentation({ setCurrentView, showToast }) {
                   <span>javascript (axios)</span>
                   <button 
                     onClick={() => copyToClipboard(`const axios = require('axios');
-const fs = require('fs');
-const FormData = require('form-data');
 
-const form = new FormData();
-form.append('file', fs.createReadStream('AXIS.pdf'));
+const payload = {
+  text: "Hello, welcome to Conversa AI voice services.",
+  voice_id: "en_male_neural_1",
+  audio_format: "mp3"
+};
 
-axios.post('https://ocr.dexai.app/v1/documents/process', form, {
+axios.post('https://api.conversa.ai/v1/voice/tts', payload, {
   headers: {
-    ...form.getHeaders(),
+    'Content-Type': 'application/json',
     'X-API-Key': 'YOUR_API_KEY'
   }
 }).then(response => {
-  console.log(response.data);
+  console.log('Audio URL:', response.data.audio_url);
 }).catch(err => {
   console.error(err);
 });`, 'JS Snippet')} 
                     style={styles.copyBtn}
+                    className="doc-copy-btn"
                   >
-                    {copiedText.includes('require(') ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
+                    {copiedText.includes('axios') ? <Check size={14} color="var(--success)" /> : <Copy size={14} />}
                   </button>
                 </div>
                 <pre style={styles.preCode}>
 {`const axios = require('axios');
-const fs = require('fs');
-const FormData = require('form-data');
 
-const form = new FormData();
-form.append('file', fs.createReadStream('AXIS.pdf'));
+const payload = {
+  text: "Hello, welcome to Conversa AI voice services.",
+  voice_id: "en_male_neural_1",
+  audio_format: "mp3"
+};
 
-axios.post('https://ocr.dexai.app/v1/documents/process', form, {
+axios.post('https://api.conversa.ai/v1/voice/tts', payload, {
   headers: {
-    ...form.getHeaders(),
+    'Content-Type': 'application/json',
     'X-API-Key': 'YOUR_API_KEY'
   }
 }).then(response => {
-  console.log(response.data);
+  console.log('Audio URL:', response.data.audio_url);
 }).catch(err => {
   console.error(err);
 });`}
@@ -252,7 +258,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
             <div className="animate-fade-in">
               <h1 style={styles.docTitle}>SDK Libraries</h1>
               <p style={styles.docLead}>
-                Official libraries for language platforms. Choose your installer:
+                Official libraries for language platforms. Install using your package manager:
               </p>
 
               <div style={styles.sectionDivider}></div>
@@ -264,8 +270,8 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                     <CodeIcon size={20} color="var(--primary-light)" />
                     <h3 style={styles.sdkTitle}>Node.js SDK</h3>
                   </div>
-                  <pre style={styles.preInstall}>npm install @financeai/node</pre>
-                  <button onClick={() => showToast('Node SDK docs loading...', 'info')} style={styles.sdkLink}>
+                  <pre style={styles.preInstall}>npm install @conversa/node</pre>
+                  <button onClick={() => showToast('Node SDK docs loading...', 'info')} style={styles.sdkLink} className="doc-sdk-link">
                     View Documentation <ExternalLink size={12} />
                   </button>
                 </div>
@@ -276,8 +282,8 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                     <Globe size={20} color="var(--primary-light)" />
                     <h3 style={styles.sdkTitle}>Python SDK</h3>
                   </div>
-                  <pre style={styles.preInstall}>pip install financeai-python</pre>
-                  <button onClick={() => showToast('Python SDK docs loading...', 'info')} style={styles.sdkLink}>
+                  <pre style={styles.preInstall}>pip install conversa-python</pre>
+                  <button onClick={() => showToast('Python SDK docs loading...', 'info')} style={styles.sdkLink} className="doc-sdk-link">
                     View Documentation <ExternalLink size={12} />
                   </button>
                 </div>
@@ -288,8 +294,8 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                     <Terminal size={20} color="var(--primary-light)" />
                     <h3 style={styles.sdkTitle}>Ruby SDK</h3>
                   </div>
-                  <pre style={styles.preInstall}>gem install financeai</pre>
-                  <button onClick={() => showToast('Ruby SDK docs loading...', 'info')} style={styles.sdkLink}>
+                  <pre style={styles.preInstall}>gem install conversa</pre>
+                  <button onClick={() => showToast('Ruby SDK docs loading...', 'info')} style={styles.sdkLink} className="doc-sdk-link">
                     View Documentation <ExternalLink size={12} />
                   </button>
                 </div>
@@ -300,8 +306,8 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                     <Settings size={20} color="var(--primary-light)" />
                     <h3 style={styles.sdkTitle}>PHP SDK</h3>
                   </div>
-                  <pre style={styles.preInstall}>composer require financeai/php</pre>
-                  <button onClick={() => showToast('PHP SDK docs loading...', 'info')} style={styles.sdkLink}>
+                  <pre style={styles.preInstall}>composer require conversa/php</pre>
+                  <button onClick={() => showToast('PHP SDK docs loading...', 'info')} style={styles.sdkLink} className="doc-sdk-link">
                     View Documentation <ExternalLink size={12} />
                   </button>
                 </div>
@@ -313,7 +319,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
             <div className="animate-fade-in">
               <h1 style={styles.docTitle}>Rate Limits & Pricing</h1>
               <p style={styles.docLead}>
-                Review requests limits based on active subscription tiers.
+                Review limits based on your Conversa subscription tier.
               </p>
 
               <div style={styles.sectionDivider}></div>
@@ -324,7 +330,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                   <h3 style={styles.sdkTitle}>Free Tier</h3>
                   <div style={styles.priceNum}>$0 <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/mo</span></div>
                   <ul style={styles.limitList}>
-                    <li>100 documents/mo</li>
+                    <li>1,000 audio seconds/mo</li>
                     <li>5 requests/min limit</li>
                     <li>Community support</li>
                   </ul>
@@ -335,7 +341,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                   <h3 style={styles.sdkTitle}>Pro Plan</h3>
                   <div style={styles.priceNum}>$99 <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/mo</span></div>
                   <ul style={styles.limitList}>
-                    <li>5,000 documents/mo</li>
+                    <li>50,000 audio seconds/mo</li>
                     <li>50 requests/min limit</li>
                     <li>Priority email support</li>
                   </ul>
@@ -346,7 +352,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                   <h3 style={styles.sdkTitle}>Enterprise</h3>
                   <div style={styles.priceNum}>Custom</div>
                   <ul style={styles.limitList}>
-                    <li>Unlimited documents</li>
+                    <li>Unlimited audio seconds</li>
                     <li>Custom rate limits</li>
                     <li>Dedicated support & SLAs</li>
                   </ul>
@@ -381,7 +387,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                   <tr>
                     <td><span className="badge badge-danger">400</span></td>
                     <td style={{ fontWeight: '600' }}>Bad Request</td>
-                    <td>Missing parameters, invalid file type or unreadable file.</td>
+                    <td>Missing parameters, invalid audio file format or length.</td>
                   </tr>
                   <tr>
                     <td><span className="badge badge-danger">401</span></td>
@@ -396,7 +402,7 @@ axios.post('https://ocr.dexai.app/v1/documents/process', form, {
                   <tr>
                     <td><span className="badge badge-danger">500</span></td>
                     <td style={{ fontWeight: '600' }}>Internal Server Error</td>
-                    <td>Server encountered an error processing documents.</td>
+                    <td>Server encountered an error processing speech synthesis or transcription.</td>
                   </tr>
                 </tbody>
               </table>
@@ -419,9 +425,6 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: '260px 1fr',
     gap: '48px',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   sidebar: {
     display: 'flex',
@@ -531,10 +534,6 @@ const styles = {
     transition: 'var(--transition)',
     padding: '4px',
     borderRadius: '4px',
-    ':hover': {
-      color: 'var(--text-primary)',
-      background: 'rgba(255, 255, 255, 0.05)',
-    }
   },
   preCode: {
     padding: '16px',
@@ -676,9 +675,6 @@ const styles = {
     alignItems: 'center',
     gap: '4px',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--text-primary)',
-    }
   },
   priceNum: {
     fontSize: '1.8rem',

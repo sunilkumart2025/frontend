@@ -35,12 +35,12 @@ export default function App() {
 
   // Centralized History Log matching video data
   const [historyData, setHistoryData] = useState([
-    { id: 1, name: 'AXIS.pdf', type: 'Bank Statement', submitted: '6/13/2026, 6:34:45 PM', time: '20.9s', status: 'Completed' },
-    { id: 2, name: 'Bank-Statement_2026-05.pdf', type: 'Bank Statement', submitted: '6/13/2026, 10:48:38 AM', time: '22.1s', status: 'Completed' },
-    { id: 3, name: 'HSBC_2025-07.pdf', type: 'Bank Statement', submitted: '6/13/2026, 10:40:34 AM', time: '33.5s', status: 'Completed' },
-    { id: 4, name: 'Detail_Level_Doc.csv', type: 'Invoice', submitted: '6/13/2026, 10:43:02 AM', time: '48.4s', status: 'Completed' },
-    { id: 5, name: 'HSBC_2026-04.pdf', type: 'Bank Statement', submitted: '6/13/2026, 10:41:20 AM', time: '10.3s', status: 'Completed' },
-    { id: 6, name: 'Invoice_2026.pdf', type: 'Invoice', submitted: '6/13/2026, 10:40:02 AM', time: '42.1s', status: 'Completed' }
+    { id: 1, name: 'welcome_prompt.wav', type: 'Text to Speech', submitted: '6/13/2026, 6:34:45 PM', time: '4.5s', status: 'Completed' },
+    { id: 2, name: 'meeting_minutes.mp3', type: 'Speech to Text', submitted: '6/13/2026, 10:48:38 AM', time: '120.2s', status: 'Completed' },
+    { id: 3, name: 'interactive_ivr.wav', type: 'Text to Speech', submitted: '6/13/2026, 10:40:34 AM', time: '12.8s', status: 'Completed' },
+    { id: 4, name: 'call_center_log_04.mp3', type: 'Speech to Text', submitted: '6/13/2026, 10:43:02 AM', time: '345.1s', status: 'Completed' },
+    { id: 5, name: 'podcast_episode_12.mp3', type: 'Speech to Text', submitted: '6/13/2026, 10:41:20 AM', time: '1800.5s', status: 'Completed' },
+    { id: 6, name: 'checkout_confirm.wav', type: 'Text to Speech', submitted: '6/13/2026, 10:40:02 AM', time: '3.1s', status: 'Completed' }
   ]);
 
   const login = (userData) => {
@@ -108,7 +108,19 @@ export default function App() {
         );
       case 'voice-tools':
         return user ? (
-          <VoiceTools showToast={showToast} />
+          <VoiceTools showToast={showToast} defaultSubView="hub" />
+        ) : (
+          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
+        );
+      case 'voice-tools-tts':
+        return user ? (
+          <VoiceTools showToast={showToast} defaultSubView="tts" />
+        ) : (
+          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
+        );
+      case 'voice-tools-stt':
+        return user ? (
+          <VoiceTools showToast={showToast} defaultSubView="stt" />
         ) : (
           <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
         );

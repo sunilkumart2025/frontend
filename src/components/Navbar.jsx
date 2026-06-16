@@ -12,14 +12,16 @@ import {
   User,
   Menu,
   X,
-  Sparkles,
-  Volume2
+  Volume2,
+  Mic
 } from 'lucide-react';
 
 export default function Navbar({ currentView, setCurrentView, user, logout, showToast }) {
   const [resourcesOpen, setResourcesOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const resourcesLeaveTimer = React.useRef(null);
+  const servicesLeaveTimer = React.useRef(null);
 
   const navigate = (view) => {
     setCurrentView(view);
@@ -35,19 +37,37 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
     navigate('home');
   };
 
+  // Services dropdown hover handlers with delay to prevent premature close
+  const onServicesEnter = () => {
+    if (servicesLeaveTimer.current) clearTimeout(servicesLeaveTimer.current);
+    setServicesOpen(true);
+  };
+  const onServicesLeave = () => {
+    servicesLeaveTimer.current = setTimeout(() => setServicesOpen(false), 150);
+  };
+
+  // Resources dropdown hover handlers with delay
+  const onResourcesEnter = () => {
+    if (resourcesLeaveTimer.current) clearTimeout(resourcesLeaveTimer.current);
+    setResourcesOpen(true);
+  };
+  const onResourcesLeave = () => {
+    resourcesLeaveTimer.current = setTimeout(() => setResourcesOpen(false), 150);
+  };
+
   return (
     <nav style={styles.nav}>
       <div style={styles.navContainer}>
         {/* Brand Logo */}
         <div onClick={() => navigate('home')} className="navbar-brand">
           <div style={styles.logoIcon}>
-            <Sparkles size={18} color="#ffffff" fill="#ffffff" />
+            <Volume2 size={18} color="#ffffff" fill="#ffffff" />
           </div>
-          <span>FinanceAI</span>
+          <span>Conversa AI</span>
         </div>
 
         {/* Desktop Menu */}
-        <div style={styles.navLinks}>
+        <div style={styles.navLinks} className="nav-links-desktop">
           {user ? (
             /* Logged In Navbar */
             <>
@@ -78,28 +98,28 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
               {/* Services Dropdown */}
               <div 
                 style={styles.dropdownContainer}
-                onMouseEnter={() => setServicesOpen(true)}
-                onMouseLeave={() => setServicesOpen(false)}
+                onMouseEnter={onServicesEnter}
+                onMouseLeave={onServicesLeave}
               >
-                <button style={{...styles.navLink, ...((currentView === 'voice-tools') ? styles.navLinkActive : {})}}>
-                  <Sparkles size={16} />
+                <button style={{...styles.navLink, ...((currentView === 'voice-tools' || currentView === 'voice-tools-tts' || currentView === 'voice-tools-stt') ? styles.navLinkActive : {})}}>
+                  <Volume2 size={16} />
                   Services
                   <ChevronDown size={14} style={{ transform: servicesOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
                 </button>
                 {servicesOpen && (
                   <div style={styles.dropdownMenu} className="animate-fade-in">
-                    <div onClick={() => navigate('voice-tools')} style={styles.dropdownItem}>
+                    <div onMouseDown={() => navigate('voice-tools-tts')} style={styles.dropdownItem}>
                       <Volume2 size={16} color="#8b5cf6" />
                       <div>
-                        <div style={styles.dropdownItemTitle}>Voice Tools</div>
-                        <div style={styles.dropdownItemDesc}>TTS & STT conversion</div>
+                        <div style={styles.dropdownItemTitle}>Text to Speech</div>
+                        <div style={styles.dropdownItemDesc}>Convert text to audio</div>
                       </div>
                     </div>
-                    <div onClick={() => { navigate('dashboard'); showToast('Document scanner available on dashboard!', 'info'); }} style={styles.dropdownItem}>
-                      <FileText size={16} color="#ec4899" />
+                    <div onMouseDown={() => navigate('voice-tools-stt')} style={styles.dropdownItem}>
+                      <Mic size={16} color="#ec4899" />
                       <div>
-                        <div style={styles.dropdownItemTitle}>Document Scanner</div>
-                        <div style={styles.dropdownItemDesc}>Process bank statements</div>
+                        <div style={styles.dropdownItemTitle}>Speech to Text</div>
+                        <div style={styles.dropdownItemDesc}>Transcribe voice to text</div>
                       </div>
                     </div>
                   </div>
@@ -128,8 +148,8 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
           {/* Resources Dropdown (Shared) */}
           <div 
             style={styles.dropdownContainer}
-            onMouseEnter={() => setResourcesOpen(true)}
-            onMouseLeave={() => setResourcesOpen(false)}
+            onMouseEnter={onResourcesEnter}
+            onMouseLeave={onResourcesLeave}
           >
             <button style={{
               ...styles.navLink, 
@@ -140,28 +160,28 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
             </button>
             {resourcesOpen && (
               <div style={styles.dropdownMenu} className="animate-fade-in">
-                <div onClick={() => navigate('help-center')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigate('help-center')} style={styles.dropdownItem}>
                   <HelpCircle size={16} color="#3b82f6" />
                   <div>
                     <div style={styles.dropdownItemTitle}>Help Center</div>
                     <div style={styles.dropdownItemDesc}>Guides & FAQ support</div>
                   </div>
                 </div>
-                <div onClick={() => navigate('system-status')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigate('system-status')} style={styles.dropdownItem}>
                   <Activity size={16} color="#10b981" />
                   <div>
                     <div style={styles.dropdownItemTitle}>System Status</div>
                     <div style={styles.dropdownItemDesc}>Real-time uptime metrics</div>
                   </div>
                 </div>
-                <div onClick={() => navigate('about-us')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigate('about-us')} style={styles.dropdownItem}>
                   <Info size={16} color="#f59e0b" />
                   <div>
                     <div style={styles.dropdownItemTitle}>About Us</div>
                     <div style={styles.dropdownItemDesc}>Our story & values</div>
                   </div>
                 </div>
-                <div onClick={() => navigate('contact')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigate('contact')} style={styles.dropdownItem}>
                   <Mail size={16} color="#ec4899" />
                   <div>
                     <div style={styles.dropdownItemTitle}>Contact</div>
@@ -174,7 +194,7 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
         </div>
 
         {/* Auth Buttons / Profile info */}
-        <div style={styles.authSection}>
+        <div style={styles.authSection} className="auth-section-desktop">
           {user ? (
             <div style={styles.userProfile}>
               <div style={styles.userAvatar}>
@@ -201,7 +221,7 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
         </div>
 
         {/* Mobile menu toggle */}
-        <button style={styles.mobileMenuToggle} onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+        <button style={styles.mobileMenuToggle} className="mobile-menu-toggle-responsive" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
@@ -224,7 +244,9 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
               <button onClick={() => navigate('dashboard')} style={styles.mobileNavLink}>Dashboard</button>
               <button onClick={() => navigate('documentation')} style={styles.mobileNavLink}>Documentation</button>
               <button onClick={() => navigate('history')} style={styles.mobileNavLink}>History</button>
-              <button onClick={() => navigate('voice-tools')} style={styles.mobileNavLink}>Voice Tools</button>
+              <button onClick={() => navigate('voice-tools')} style={styles.mobileNavLink}>Voice Tools Hub</button>
+              <button onClick={() => navigate('voice-tools-tts')} style={styles.mobileNavLink}>Text to Speech</button>
+              <button onClick={() => navigate('voice-tools-stt')} style={styles.mobileNavLink}>Speech to Text</button>
             </>
           ) : (
             <>
@@ -286,10 +308,7 @@ const styles = {
     boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
   },
   navLinks: {
-    display: 'none',
-    '@media (min-width: 769px)': {
-      display: 'flex',
-    },
+    display: 'flex',
     alignItems: 'center',
     gap: '4px',
   },
@@ -352,10 +371,7 @@ const styles = {
     marginTop: '2px',
   },
   authSection: {
-    display: 'none',
-    '@media (min-width: 769px)': {
-      display: 'flex',
-    },
+    display: 'flex',
     alignItems: 'center',
     gap: '12px',
   },
@@ -417,16 +433,8 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'var(--transition)',
-    ':hover': {
-      color: '#ef4444',
-      background: 'rgba(239, 68, 68, 0.1)',
-    }
   },
   mobileMenuToggle: {
-    display: 'block',
-    '@media (min-width: 769px)': {
-      display: 'none',
-    },
     background: 'transparent',
     border: 'none',
     color: 'var(--text-primary)',
@@ -485,3 +493,4 @@ const styles = {
     cursor: 'pointer',
   }
 };
+

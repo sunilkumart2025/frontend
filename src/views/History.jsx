@@ -9,11 +9,12 @@ import {
   AlertCircle, 
   Eye, 
   X,
-  Code
+  Code,
+  Mic
 } from 'lucide-react';
 
 export default function History({ historyData, showToast }) {
-  const [activeTab, setActiveTab] = useState('documents'); // 'overview' | 'documents' | 'voice'
+  const [activeTab, setActiveTab] = useState('voice-logs'); // 'overview' | 'voice-logs'
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -25,17 +26,16 @@ export default function History({ historyData, showToast }) {
   const pendingCount = historyData.filter(d => d.status === 'Pending').length;
   const failedCount = historyData.filter(d => d.status === 'Failed').length;
 
-  const bankCount = historyData.filter(d => d.type === 'Bank Statement').length;
-  const receiptCount = historyData.filter(d => d.type === 'Receipt').length;
-  const invoiceCount = historyData.filter(d => d.type === 'Invoice').length;
+  const ttsCount = historyData.filter(d => d.type === 'Text to Speech').length;
+  const sttCount = historyData.filter(d => d.type === 'Speech to Text').length;
+  const totalSeconds = historyData.reduce((acc, d) => acc + (parseFloat(d.time) || 0), 0).toFixed(1);
 
   // Filters logic
   const filteredData = historyData.filter(item => {
     const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === 'all' || 
-                        (typeFilter === 'bank' && item.type === 'Bank Statement') ||
-                        (typeFilter === 'receipt' && item.type === 'Receipt') ||
-                        (typeFilter === 'invoice' && item.type === 'Invoice');
+                        (typeFilter === 'tts' && item.type === 'Text to Speech') ||
+                        (typeFilter === 'stt' && item.type === 'Speech to Text');
     const matchesStatus = statusFilter === 'all' || item.status.toLowerCase() === statusFilter.toLowerCase();
     
     return matchesSearch && matchesType && matchesStatus;
@@ -67,28 +67,22 @@ export default function History({ historyData, showToast }) {
     <div style={styles.page} className="animate-fade-in">
       <div style={styles.header}>
         <h1 style={styles.title}>Processing History</h1>
-        <p style={styles.sub}>View and track all your document processing and voice conversion activities.</p>
+        <p style={styles.sub}>View and track all your speech synthesis and voice transcribing activities.</p>
       </div>
 
       {/* Tabs */}
       <div className="tab-list">
         <button 
+          onClick={() => setActiveTab('voice-logs')} 
+          className={`tab-btn ${activeTab === 'voice-logs' ? 'active' : ''}`}
+        >
+          Voice Logs
+        </button>
+        <button 
           onClick={() => setActiveTab('overview')} 
           className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
         >
           Overview
-        </button>
-        <button 
-          onClick={() => setActiveTab('documents')} 
-          className={`tab-btn ${activeTab === 'documents' ? 'active' : ''}`}
-        >
-          Documents
-        </button>
-        <button 
-          onClick={() => setActiveTab('voice')} 
-          className={`tab-btn ${activeTab === 'voice' ? 'active' : ''}`}
-        >
-          Voice Tools
         </button>
       </div>
 
@@ -103,34 +97,30 @@ export default function History({ historyData, showToast }) {
             </div>
             <div className="glass-card" style={styles.summaryCard}>
               <div style={{...styles.summaryNum, color: 'var(--success)'}}>{completedCount}</div>
-              <div style={styles.summaryLabel}>Documents Processed</div>
+              <div style={styles.summaryLabel}>Conversions Processed</div>
             </div>
             <div className="glass-card" style={styles.summaryCard}>
-              <div style={{...styles.summaryNum, color: 'var(--primary-light)'}}>0</div>
-              <div style={styles.summaryLabel}>Voice Conversions</div>
+              <div style={{...styles.summaryNum, color: 'var(--primary-light)'}}>{totalSeconds}s</div>
+              <div style={styles.summaryLabel}>Audio Duration Processed</div>
             </div>
           </div>
 
-          <h3 style={{...styles.secTitle, marginTop: '40px'}}>Document Categories</h3>
+          <h3 style={{...styles.secTitle, marginTop: '40px'}}>Voice Categories</h3>
           <div style={styles.categoriesGrid}>
             <div className="glass-card" style={styles.catCard}>
-              <div style={styles.catVal}>{bankCount}</div>
-              <div style={styles.catName}>Bank Statements</div>
+              <div style={styles.catVal}>{ttsCount}</div>
+              <div style={styles.catName}>Text to Speech</div>
             </div>
             <div className="glass-card" style={styles.catCard}>
-              <div style={styles.catVal}>{receiptCount}</div>
-              <div style={styles.catName}>Receipts</div>
-            </div>
-            <div className="glass-card" style={styles.catCard}>
-              <div style={styles.catVal}>{invoiceCount}</div>
-              <div style={styles.catName}>Invoices</div>
+              <div style={styles.catVal}>{sttCount}</div>
+              <div style={styles.catName}>Speech to Text</div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Documents Log Tab */}
-      {activeTab === 'documents' && (
+      {/* Voice Logs Tab */}
+      {activeTab === 'voice-logs' && (
         <div className="animate-fade-in">
           {/* Filters Bar */}
           <div style={styles.filtersBar}>
@@ -143,6 +133,7 @@ export default function History({ historyData, showToast }) {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 style={styles.searchInput}
+                className="history-search-input"
               />
             </div>
 
@@ -153,9 +144,8 @@ export default function History({ historyData, showToast }) {
               style={styles.filterSelect}
             >
               <option value="all">All Types</option>
-              <option value="bank">Bank Statement</option>
-              <option value="receipt">Receipt</option>
-              <option value="invoice">Invoice</option>
+              <option value="tts">Text to Speech</option>
+              <option value="stt">Speech to Text</option>
             </select>
 
             {/* Dropdown 2: Status */}
@@ -179,7 +169,7 @@ export default function History({ historyData, showToast }) {
                   <th>Filename</th>
                   <th>Type</th>
                   <th>Submitted</th>
-                  <th>Processing Time</th>
+                  <th>Audio Duration</th>
                   <th>Status</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
                 </tr>
@@ -188,7 +178,11 @@ export default function History({ historyData, showToast }) {
                 {filteredData.map((item) => (
                   <tr key={item.id}>
                     <td style={styles.filenameCell}>
-                      <FileText size={16} color="var(--primary-light)" style={{ flexShrink: 0 }} />
+                      {item.type === 'Text to Speech' ? (
+                        <Volume2 size={16} color="var(--primary-light)" style={{ flexShrink: 0 }} />
+                      ) : (
+                        <Mic size={16} color="var(--secondary)" style={{ flexShrink: 0 }} />
+                      )}
                       <span style={{ fontWeight: '500', color: 'var(--text-primary)' }}>{item.name}</span>
                     </td>
                     <td>{item.type}</td>
@@ -209,13 +203,14 @@ export default function History({ historyData, showToast }) {
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={styles.actionsCell}>
-                        <button onClick={() => setSelectedDoc(item)} style={styles.rowBtn} title="View Details">
+                        <button onClick={() => setSelectedDoc(item)} style={styles.rowBtn} className="history-row-btn" title="View Details">
                           <Eye size={14} />
                         </button>
                         <button 
                           onClick={() => handleDownload(item.name)} 
                           disabled={item.status !== 'Completed'}
                           style={{...styles.rowBtn, opacity: item.status === 'Completed' ? 1 : 0.4}} 
+                          className="history-row-btn"
                           title="Download JSON"
                         >
                           <Download size={14} />
@@ -228,7 +223,7 @@ export default function History({ historyData, showToast }) {
                 {filteredData.length === 0 && (
                   <tr>
                     <td colSpan={6} style={styles.noDataCell}>
-                      No document history records found matching current query.
+                      No voice history records found matching current query.
                     </td>
                   </tr>
                 )}
@@ -238,26 +233,13 @@ export default function History({ historyData, showToast }) {
         </div>
       )}
 
-      {/* Voice Logs Tab */}
-      {activeTab === 'voice' && (
-        <div style={styles.voiceTab} className="animate-fade-in">
-          <div style={styles.noDataCell} style={{ padding: '64px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
-            <Volume2 size={32} color="var(--text-muted)" style={{ marginBottom: '16px' }} />
-            <h4 style={{ color: 'var(--text-primary)', marginBottom: '8px' }}>No Voice conversion records yet</h4>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
-              Convert text to speech inside the Services menu to write log activity.
-            </p>
-          </div>
-        </div>
-      )}
-
       {/* Details Modal */}
       {selectedDoc && (
         <div style={styles.modalOverlay}>
           <div className="glass-card" style={styles.modal} className="glass-card animate-fade-in">
             <div style={styles.modalHeader}>
-              <h3 style={styles.modalTitle}>Document Details</h3>
-              <button onClick={() => setSelectedDoc(null)} style={styles.modalCloseBtn}>
+              <h3 style={styles.modalTitle}>Audio Job Details</h3>
+              <button onClick={() => setSelectedDoc(null)} style={styles.modalCloseBtn} className="history-modal-close-btn">
                 <X size={18} />
               </button>
             </div>
@@ -269,7 +251,7 @@ export default function History({ historyData, showToast }) {
                   <div style={styles.metaVal}>{selectedDoc.name}</div>
                 </div>
                 <div>
-                  <span style={styles.metaLabel}>Document Type</span>
+                  <span style={styles.metaLabel}>Service Type</span>
                   <div style={styles.metaVal}>{selectedDoc.type}</div>
                 </div>
                 <div>
@@ -277,7 +259,7 @@ export default function History({ historyData, showToast }) {
                   <div style={styles.metaVal}>{selectedDoc.submitted}</div>
                 </div>
                 <div>
-                  <span style={styles.metaLabel}>Processing Time</span>
+                  <span style={styles.metaLabel}>Audio Duration</span>
                   <div style={styles.metaVal}>{selectedDoc.time}</div>
                 </div>
               </div>
@@ -289,17 +271,16 @@ export default function History({ historyData, showToast }) {
                 </div>
                 <pre style={styles.jsonPre}>
 {`{
-  "document_id": "doc_${selectedDoc.id}",
+  "request_id": "req_${selectedDoc.id}",
   "status": "${selectedDoc.status.toLowerCase()}",
   "metadata": {
     "filename": "${selectedDoc.name}",
-    "processing_seconds": ${parseFloat(selectedDoc.time)},
-    "engine_version": "finance-ocr-v2.1"
+    "duration_seconds": ${parseFloat(selectedDoc.time)},
+    "engine_version": "conversa-neural-v1.4"
   },
-  "extracted_entities": {
-    "account_holder": "Varish Tomar",
-    "statements_period": "2026-05",
-    "transactions_count": 24,
+  "result": {
+    "text": "${selectedDoc.type === 'Text to Speech' ? 'Sample synthesized speech transcript output...' : 'Extracted transcript from speech file...'}",
+    "language": "en-US",
     "confidence_rating": 0.995
   }
 }`}
@@ -422,10 +403,6 @@ const styles = {
     fontSize: '0.9rem',
     outline: 'none',
     transition: 'var(--transition)',
-    ':focus': {
-      borderColor: 'var(--border-focus)',
-      background: 'rgba(255, 255, 255, 0.04)',
-    }
   },
   filterSelect: {
     padding: '10px 16px',
@@ -464,11 +441,6 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--text-primary)',
-      borderColor: 'var(--primary)',
-      background: 'rgba(139, 92, 246, 0.05)',
-    }
   },
   noDataCell: {
     padding: '32px',
@@ -511,9 +483,6 @@ const styles = {
     color: 'var(--text-muted)',
     cursor: 'pointer',
     padding: '4px',
-    ':hover': {
-      color: 'var(--text-primary)',
-    }
   },
   modalBody: {
     display: 'flex',

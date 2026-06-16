@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+import { Volume2 } from 'lucide-react';
 
 export default function Footer({ setCurrentView }) {
   const navigate = (view) => {
@@ -12,15 +12,15 @@ export default function Footer({ setCurrentView }) {
       <div style={styles.container}>
         <div style={styles.grid}>
           {/* Logo & Description */}
-          <div style={styles.brandCol}>
+          <div style={styles.brandCol} className="footer-brand-col-responsive">
             <div onClick={() => navigate('home')} style={styles.logo} className="navbar-brand">
               <div style={styles.logoIcon}>
-                <Sparkles size={16} color="#ffffff" fill="#ffffff" />
+                <Volume2 size={16} color="#ffffff" fill="#ffffff" />
               </div>
-              <span>FinanceAI</span>
+              <span>Conversa AI</span>
             </div>
             <p style={styles.desc}>
-              AI-powered financial document processing for modern accountants and enterprise teams. Secure, fast, and compliant.
+              AI-powered speech synthesis and voice transcribing for modern businesses and applications. Secure, fast, and compliant.
             </p>
           </div>
 
@@ -28,10 +28,10 @@ export default function Footer({ setCurrentView }) {
           <div style={styles.linksCol}>
             <h4 style={styles.title}>Product</h4>
             <ul style={styles.list}>
-              <li><button onClick={() => navigate('home')} style={styles.link}>Features</button></li>
-              <li><button onClick={() => navigate('documentation')} style={styles.link}>API Docs</button></li>
-              <li><button onClick={() => navigate('documentation')} style={styles.link}>SDK Libraries</button></li>
-              <li><button onClick={() => navigate('home')} style={styles.link}>Pricing</button></li>
+              <li><button onClick={() => navigate('voice-tools')} style={styles.link} className="footer-link-hover">Text to Speech</button></li>
+              <li><button onClick={() => navigate('voice-tools')} style={styles.link} className="footer-link-hover">Speech to Text</button></li>
+              <li><button onClick={() => navigate('documentation')} style={styles.link} className="footer-link-hover">API Docs</button></li>
+              <li><button onClick={() => navigate('home')} style={styles.link} className="footer-link-hover">Pricing Plan</button></li>
             </ul>
           </div>
 
@@ -39,10 +39,10 @@ export default function Footer({ setCurrentView }) {
           <div style={styles.linksCol}>
             <h4 style={styles.title}>Support</h4>
             <ul style={styles.list}>
-              <li><button onClick={() => navigate('help-center')} style={styles.link}>Help Center</button></li>
-              <li><button onClick={() => navigate('contact')} style={styles.link}>Contact Sales</button></li>
-              <li><button onClick={() => navigate('system-status')} style={styles.link}>System Status</button></li>
-              <li><button onClick={() => navigate('about-us')} style={styles.link}>About Us</button></li>
+              <li><button onClick={() => navigate('help-center')} style={styles.link} className="footer-link-hover">Help Center</button></li>
+              <li><button onClick={() => navigate('contact')} style={styles.link} className="footer-link-hover">Contact Sales</button></li>
+              <li><button onClick={() => navigate('system-status')} style={styles.link} className="footer-link-hover">System Status</button></li>
+              <li><button onClick={() => navigate('about-us')} style={styles.link} className="footer-link-hover">About Us</button></li>
             </ul>
           </div>
 
@@ -50,17 +50,17 @@ export default function Footer({ setCurrentView }) {
           <div style={styles.linksCol}>
             <h4 style={styles.title}>Legal</h4>
             <ul style={styles.list}>
-              <li><button style={styles.link}>Privacy Policy</button></li>
-              <li><button style={styles.link}>Terms of Service</button></li>
-              <li><button style={styles.link}>Security (SOC 2)</button></li>
-              <li><button style={styles.link}>GDPR Compliance</button></li>
+              <li><button style={styles.link} className="footer-link-hover">Privacy Policy</button></li>
+              <li><button style={styles.link} className="footer-link-hover">Terms of Service</button></li>
+              <li><button style={styles.link} className="footer-link-hover">Security Compliance</button></li>
+              <li><button style={styles.link} className="footer-link-hover">GDPR Regulations</button></li>
             </ul>
           </div>
         </div>
 
         <div style={styles.bottom}>
           <div style={styles.copyright}>
-            © {new Date().getFullYear()} FinanceAI. All rights reserved. Built with precision.
+            © {new Date().getFullYear()} Conversa AI. All rights reserved. Built with precision.
           </div>
           <div style={styles.bottomLinks}>
             <span style={styles.statusDot}></span>
@@ -92,10 +92,6 @@ const styles = {
     marginBottom: '48px',
   },
   brandCol: {
-    gridColumn: 'span 2',
-    '@media (max-width: 768px)': {
-      gridColumn: 'span 1',
-    },
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
@@ -148,9 +144,6 @@ const styles = {
     padding: 0,
     textAlign: 'left',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--text-primary)',
-    }
   },
   bottom: {
     borderTop: '1px solid var(--border-color)',
@@ -178,3 +171,4 @@ const styles = {
     boxShadow: '0 0 8px var(--success)',
   }
 };
+

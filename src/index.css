@@ -389,3 +389,306 @@ p {
     font-size: 2.5rem;
   }
 }
+
+/* RESPONSIVE LAYOUT OVERRIDES (REMOVING REACT INLINE STYLE WARNINGS) */
+.footer-brand-col-responsive {
+  grid-column: span 2;
+}
+@media (max-width: 768px) {
+  .footer-brand-col-responsive {
+    grid-column: span 1 !important;
+  }
+}
+
+.footer-link-hover {
+  transition: var(--transition);
+}
+.footer-link-hover:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Navbar responsive helpers */
+@media (min-width: 769px) {
+  .nav-links-desktop {
+    display: flex !important;
+  }
+  .auth-section-desktop {
+    display: flex !important;
+  }
+  .mobile-menu-toggle-responsive {
+    display: none !important;
+  }
+}
+@media (max-width: 768px) {
+  .nav-links-desktop {
+    display: none !important;
+  }
+  .auth-section-desktop {
+    display: none !important;
+  }
+  .mobile-menu-toggle-responsive {
+    display: block !important;
+  }
+}
+
+/* VoiceTools responsive grid */
+.voice-hub-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+@media (max-width: 600px) {
+  .voice-hub-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* SystemStatus responsive form */
+.status-sub-form {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+@media (max-width: 600px) {
+  .status-sub-form {
+    max-width: 100% !important;
+  }
+}
+
+/* Contact Us grid */
+.contact-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+  margin: 40px 0 60px 0;
+}
+@media (max-width: 900px) {
+  .contact-grid-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* AboutUs grids */
+.about-mission-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin: 40px 0;
+}
+@media (max-width: 768px) {
+  .about-mission-grid-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Documentation page columns */
+.docs-layout-container {
+  display: flex;
+}
+@media (max-width: 768px) {
+  .docs-layout-container {
+    flex-direction: column !important;
+  }
+  .docs-sidebar-responsive {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    top: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-color) !important;
+  }
+  .docs-content-responsive {
+    padding: 24px !important;
+  }
+}
+
+/* Dashboard key-manager grids */
+.dash-grid-two-columns {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+@media (max-width: 900px) {
+  .dash-grid-two-columns {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ApiReference interactive sandbox */
+.ref-layout-grid-row {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+}
+.ref-playground-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  .ref-layout-grid-row {
+    flex-direction: column !important;
+  }
+  .ref-playground-grid-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* History component hover & focus classes */
+.history-search-input:focus {
+  border-color: var(--border-focus) !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+.history-row-btn {
+  transition: var(--transition);
+}
+.history-row-btn:hover {
+  color: var(--text-primary) !important;
+  border-color: var(--primary) !important;
+  background: rgba(139, 92, 246, 0.05) !important;
+}
+
+.history-modal-close-btn {
+  transition: var(--transition);
+}
+.history-modal-close-btn:hover {
+  color: var(--text-primary) !important;
+}
+
+/* VoiceTools hover classes */
+.voice-back-btn {
+  transition: var(--transition);
+}
+.voice-back-btn:hover {
+  color: var(--text-primary) !important;
+}
+
+.voice-clear-btn {
+  transition: var(--transition);
+}
+.voice-clear-btn:hover {
+  color: #ef4444 !important;
+}
+
+.stt-split-view-responsive {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 600px) {
+  .stt-split-view-responsive {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.voice-action-icon-btn {
+  transition: var(--transition);
+}
+.voice-action-icon-btn:hover {
+  color: var(--text-primary) !important;
+  border-color: var(--primary) !important;
+  background: rgba(139, 92, 246, 0.05) !important;
+}
+
+/* ApiReference hover classes */
+.api-back-btn {
+  transition: var(--transition);
+}
+.api-back-btn:hover {
+  color: var(--text-primary) !important;
+}
+
+.api-endpoint-btn {
+  transition: var(--transition);
+}
+.api-endpoint-btn:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Documentation page hovers */
+.doc-copy-btn {
+  transition: var(--transition);
+}
+.doc-copy-btn:hover {
+  color: var(--text-primary) !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+
+.doc-sdk-link {
+  transition: var(--transition);
+}
+.doc-sdk-link:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Contact page hovers */
+.contact-info-link {
+  transition: var(--transition);
+}
+.contact-info-link:hover {
+  color: var(--primary-light) !important;
+}
+
+/* Auth pages hovers */
+.auth-eye-btn {
+  transition: var(--transition);
+}
+.auth-eye-btn:hover {
+  color: var(--text-primary) !important;
+}
+
+.auth-suggestion-item {
+  transition: var(--transition);
+}
+.auth-suggestion-item:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-primary) !important;
+}
+
+.auth-link-btn {
+  transition: var(--transition);
+}
+.auth-link-btn:hover {
+  color: var(--primary) !important;
+  text-decoration: underline !important;
+}
+
+/* Documentation and ApiReference layout classes */
+.docs-grid-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 48px;
+}
+@media (max-width: 768px) {
+  .docs-grid-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.api-ref-layout-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 40px;
+}
+@media (max-width: 768px) {
+  .api-ref-layout-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.api-ref-snippets-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 900px) {
+  .api-ref-snippets-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+

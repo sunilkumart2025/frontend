@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Shield, Heart, Award, CheckCircle } from 'lucide-react';
+import { Shield, Heart, Award } from 'lucide-react';
 
 export default function AboutUs({ setCurrentView }) {
   const navigate = (view) => {
@@ -8,15 +8,15 @@ export default function AboutUs({ setCurrentView }) {
   };
 
   const values = [
-    { title: 'Security First', desc: 'Your financial data is sacred. We employ enterprise-grade security measures and never store sensitive information longer than necessary.', icon: Shield },
-    { title: 'Excellence', desc: 'We are obsessed with accuracy and performance. Every model update and feature iteration undergoes rigorous testing to ensure reliability.', icon: Award },
-    { title: 'Customer-Centric', desc: 'Your success is our success. We listen to feedback, iterate quickly, and provide support that goes above and beyond expectations.', icon: Heart }
+    { title: 'Security First', desc: 'Your audio recordings are sacred. We employ enterprise-grade security and encryption measures, ensuring no voice clip or log is stored longer than necessary.', icon: Shield },
+    { title: 'Excellence', desc: 'We are obsessed with speech clarity and transcribing accuracy. Every neural model update undergoes rigorous test protocols.', icon: Award },
+    { title: 'Customer-Centric', desc: 'Your success is our success. We listen to user feedback, iterate on vocal training pipelines, and provide responsive expert support.', icon: Heart }
   ];
 
   const team = [
-    { initials: 'SM', name: 'Sarah Mitchell', role: 'CEO & Co-Founder', bio: 'Former Partner at FinFour Partners with 15+ years in financial services. PhD in Computer Science.' },
-    { initials: 'DK', name: 'David Kim', role: 'CTO & Co-Founder', bio: 'AI Research Scientist from Google Brain. Specialized in document understanding and OCR.' },
-    { initials: 'AR', name: 'Alex Rodriguez', role: 'VP of Product', bio: 'Product management expert from fintech unicorns. Passionate about user experience and developer integrations.' }
+    { initials: 'SM', name: 'Sarah Mitchell', role: 'CEO & Co-Founder', bio: 'Former AI Architect at SpeechWorks with 15+ years in neural networks. PhD in Computational Linguistics.' },
+    { initials: 'DK', name: 'David Kim', role: 'CTO & Co-Founder', bio: 'AI Research Scientist from Google Brain. Specialized in deep neural text-to-speech synthesis (TTS) and transformer speech processing.' },
+    { initials: 'AR', name: 'Alex Rodriguez', role: 'VP of Product', bio: 'Product management expert from voice-tech unicorns. Passionate about user-friendly developer integrations and SDK portals.' }
   ];
 
   return (
@@ -24,9 +24,9 @@ export default function AboutUs({ setCurrentView }) {
       {/* Intro */}
       <section style={styles.hero}>
         <span className="badge badge-purple">Our Story</span>
-        <h1 style={styles.title}>About FinanceAI</h1>
+        <h1 style={styles.title}>About Conversa AI</h1>
         <p style={styles.sub}>
-          We're revolutionizing financial document processing with cutting-edge AI technology, helping accountants and businesses save time while increasing accuracy.
+          We're revolutionizing developer voice integration with cutting-edge Speech-to-Text and Text-to-Speech models, helping businesses automate customer service and content production.
         </p>
       </section>
 
@@ -34,16 +34,16 @@ export default function AboutUs({ setCurrentView }) {
       <section style={styles.statsSection}>
         <div style={styles.statsGrid}>
           <div style={styles.statItem}>
-            <div style={styles.statVal}>10M+</div>
-            <div style={styles.statLabel}>Documents Processed</div>
+            <div style={styles.statVal}>50M+</div>
+            <div style={styles.statLabel}>Audio Seconds Processed</div>
           </div>
           <div style={styles.statItem}>
             <div style={styles.statVal}>99.5%</div>
-            <div style={styles.statLabel}>Accuracy Rate</div>
+            <div style={styles.statLabel}>Word Accuracy Rate</div>
           </div>
           <div style={styles.statItem}>
             <div style={styles.statVal}>5,000+</div>
-            <div style={styles.statLabel}>Happy Customers</div>
+            <div style={styles.statLabel}>Happy Developers</div>
           </div>
           <div style={styles.statItem}>
             <div style={styles.statVal}>24/7</div>
@@ -54,17 +54,17 @@ export default function AboutUs({ setCurrentView }) {
 
       {/* Mission & Vision */}
       <section style={styles.section}>
-        <div style={styles.missionGrid}>
+        <div className="about-mission-grid-row" style={styles.missionGrid}>
           <div className="glass-card" style={styles.missionCard}>
             <h3 style={styles.cardTitle}>Our Mission</h3>
             <p style={styles.cardText}>
-              To empower accounting professionals with AI-driven technology that eliminates manual data entry, reduces errors, and accelerates financial workflows. We believe technology should enhance human expertise, not replace it.
+              To empower developers with enterprise-grade speech synthesis and recognition tools that remove complex model training hurdles. We believe that voice tech should be simple, natural, and accessible to any codebase.
             </p>
           </div>
           <div className="glass-card" style={styles.missionCard}>
             <h3 style={styles.cardTitle}>Our Vision</h3>
             <p style={styles.cardText}>
-              To become the global standard for intelligent financial document processing, enabling businesses of all sizes to achieve unprecedented levels of efficiency and accuracy in their financial operations.
+              To become the global infrastructure layer for conversational voice processing, enabling human-like verbal interactions in applications, games, and devices worldwide.
             </p>
           </div>
         </div>
@@ -75,13 +75,13 @@ export default function AboutUs({ setCurrentView }) {
         <div style={styles.storyContent}>
           <h2 style={styles.sectionTitle}>Our Story</h2>
           <p style={styles.storyText}>
-            Founded in 2023 by a team of AI researchers and accounting professionals, FinanceAI was born from a simple observation: accountants were spending too much time on repetitive data entry tasks that could be automated with the right technology.
+            Founded in 2023 by a team of speech recognition researchers and NLP developers, Conversa AI was born from a simple observation: developers were spending too much time configuring fragmented open-source speech models that lacked speed and multi-language reliability.
           </p>
           <p style={styles.storyText}>
-            Our founders, having worked in Big Four accounting firms and leading AI research labs, understood the pain points of manual document processing firsthand. They witnessed errors, delays, and inefficiencies that delayed closing books and compromised data analysis.
+            Our founders, having worked in major research labs, understood the complexities of training custom vocal weights and setting up scalable transcribing API pipelines. They set out to build a unified developer hub that solves these bottlenecks.
           </p>
           <p style={styles.storyText}>
-            Today, FinanceAI processes millions of financial documents monthly for accounting firms, small businesses, and enterprise finance departments worldwide. Our AI models, trained on diverse financial datasets, achieve industry-leading accuracy while maintaining the highest standards of data security and privacy.
+            Today, Conversa AI processes millions of audio clips monthly for developers and enterprise customers worldwide. Our custom speech engines deliver industry-leading accuracy while maintaining the highest standard of data privacy.
           </p>
         </div>
       </section>
@@ -112,7 +112,7 @@ export default function AboutUs({ setCurrentView }) {
       <section style={{...styles.section, borderTop: '1px solid var(--border-color)', background: 'rgba(139, 92, 246, 0.01)'}}>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>Leadership Team</h2>
-          <p style={styles.sectionDesc}>Meet the experts behind FinanceAI's innovative technology and customer success.</p>
+          <p style={styles.sectionDesc}>Meet the experts behind Conversa AI's innovative technology and customer success.</p>
         </div>
         <div style={styles.teamGrid}>
           {team.map((member, idx) => (
@@ -156,7 +156,7 @@ export default function AboutUs({ setCurrentView }) {
       <section style={styles.ctaSection}>
         <div style={styles.ctaCard}>
           <h2 style={styles.ctaTitle}>Ready to Transform Your Workflow?</h2>
-          <p style={styles.ctaDesc}>Join thousands of accountants who trust our AI to process their financial documents.</p>
+          <p style={styles.ctaDesc}>Join thousands of developers who trust Conversa AI to power their voice-enabled integrations.</p>
           <div style={styles.ctaActions}>
             <button onClick={() => navigate('signup')} className="btn btn-primary">Start Free Trial</button>
             <button onClick={() => navigate('contact')} className="btn btn-outline">Contact Sales</button>
@@ -243,12 +243,7 @@ const styles = {
     color: 'var(--text-secondary)',
   },
   missionGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '24px',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: '1fr',
-    },
+    // Defined dynamically in index.css (.about-mission-grid-row)
   },
   missionCard: {
     padding: '32px',

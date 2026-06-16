@@ -15,7 +15,8 @@ import {
   History,
   Shield,
   CreditCard,
-  X
+  X,
+  Mic
 } from 'lucide-react';
 
 export default function Dashboard({ 
@@ -30,14 +31,17 @@ export default function Dashboard({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
   
-  // Calculate counts dynamically from historyData
-  const bankStatementsCount = historyData.filter(d => d.type === 'Bank Statement').length;
-  const receiptsCount = historyData.filter(d => d.type === 'Receipt').length;
-  const invoicesCount = historyData.filter(d => d.type === 'Invoice').length;
-  const documentsTotal = bankStatementsCount + receiptsCount + invoicesCount;
+  // Calculate voice processing counts dynamically from historyData
+  const ttsCount = historyData.filter(d => d.type === 'Text to Speech').length;
+  const sttCount = historyData.filter(d => d.type === 'Speech to Text').length;
+  const totalRequests = ttsCount + sttCount;
   
-  const totalRequests = documentsTotal; // Since voice is 0 initially
-  
+  // Calculate total seconds processed
+  const totalSeconds = historyData.reduce((acc, d) => {
+    const secs = parseFloat(d.time) || 0;
+    return acc + secs;
+  }, 0).toFixed(1);
+
   const toggleKeyVisibility = (id) => {
     setApiKeys(prev => prev.map(k => k.id === id ? { ...k, visible: !k.visible } : k));
   };
@@ -83,7 +87,7 @@ export default function Dashboard({
       <div style={styles.header}>
         <div>
           <h1 style={styles.title}>Dashboard</h1>
-          <p style={styles.sub}>Manage your API keys and monitor document processing usage.</p>
+          <p style={styles.sub}>Manage your API keys and monitor speech synthesis/transcription usage.</p>
         </div>
       </div>
 
@@ -101,48 +105,48 @@ export default function Dashboard({
           </div>
         </div>
 
-        {/* Documents */}
+        {/* Audio Seconds */}
         <div className="glass-card" style={styles.statCard}>
           <div style={styles.statTop}>
-            <span style={styles.statLabel}>Documents</span>
-            <FileText size={18} color="var(--primary-light)" />
+            <span style={styles.statLabel}>Audio Seconds</span>
+            <TrendingUp size={18} color="var(--primary-light)" />
           </div>
-          <div style={styles.statVal}>{documentsTotal}</div>
+          <div style={styles.statVal}>{totalSeconds}s</div>
           <div style={styles.statBottom}>
             <span style={styles.statSubText}>
-              {bankStatementsCount} bank, {receiptsCount} receipts, {invoicesCount} invoices
+              Total duration processed
             </span>
           </div>
         </div>
 
-        {/* Voice */}
+        {/* Text to Speech */}
         <div className="glass-card" style={styles.statCard}>
           <div style={styles.statTop}>
-            <span style={styles.statLabel}>Voice</span>
+            <span style={styles.statLabel}>Text to Speech</span>
             <Volume2 size={18} color="var(--primary-light)" />
           </div>
-          <div style={styles.statVal}>0</div>
+          <div style={styles.statVal}>{ttsCount}</div>
           <div style={styles.statBottom}>
-            <span style={styles.statSubText}>0 Text-to-Speech, 0 Speech-to-Text</span>
+            <span style={styles.statSubText}>{ttsCount} speech generation jobs</span>
           </div>
         </div>
 
-        {/* Success Rate */}
+        {/* Speech to Text */}
         <div className="glass-card" style={styles.statCard}>
           <div style={styles.statTop}>
-            <span style={styles.statLabel}>Success Rate</span>
+            <span style={styles.statLabel}>Speech to Text</span>
             <TrendingUp size={18} color="var(--success)" />
           </div>
-          <div style={styles.statVal}>100.0%</div>
+          <div style={styles.statVal}>{sttCount}</div>
           <div style={styles.statBottom}>
             <span style={styles.statSubText} style={{ color: 'var(--success)' }}>
-              {documentsTotal} succeeded, 0 failed
+              {sttCount} audio transcribing jobs
             </span>
           </div>
         </div>
       </div>
 
-      <div style={styles.twoColLayout}>
+      <div style={styles.twoColLayout} className="dash-grid-two-columns">
         {/* Left Col: API Keys & Recent Actions */}
         <div style={styles.leftCol}>
           {/* API Keys Card */}
@@ -173,13 +177,13 @@ export default function Dashboard({
                   </div>
                   
                   <div style={styles.keyActions}>
-                    <button onClick={() => toggleKeyVisibility(k.id)} style={styles.iconBtn} title="Toggle Visibility">
+                    <button onClick={() => toggleKeyVisibility(k.id)} style={styles.iconBtn} className="dashboard-icon-btn" title="Toggle Visibility">
                       {k.visible ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
-                    <button onClick={() => copyKeyToClipboard(k.key, k.id)} style={styles.iconBtn} title="Copy Key">
+                    <button onClick={() => copyKeyToClipboard(k.key, k.id)} style={styles.iconBtn} className="dashboard-icon-btn" title="Copy Key">
                       {copiedKey === k.id ? <Check size={16} color="var(--success)" /> : <Copy size={16} />}
                     </button>
-                    <button onClick={() => handleDeleteKey(k.id, k.name)} style={{...styles.iconBtn, color: 'rgba(239, 68, 68, 0.6)'}} title="Delete Key">
+                    <button onClick={() => handleDeleteKey(k.id, k.name)} style={{...styles.iconBtn, color: 'rgba(239, 68, 68, 0.6)'}} className="dashboard-icon-btn" title="Delete Key">
                       <Trash2 size={16} />
                     </button>
                   </div>
@@ -201,7 +205,11 @@ export default function Dashboard({
               {historyData.slice(0, 3).map((act, idx) => (
                 <div key={act.id || idx} style={styles.activityRow}>
                   <div style={styles.activityIconWrapper}>
-                    <FileText size={16} color="var(--primary-light)" />
+                    {act.type === 'Text to Speech' ? (
+                      <Volume2 size={16} color="var(--primary-light)" />
+                    ) : (
+                      <Mic size={16} color="var(--secondary)" />
+                    )}
                   </div>
                   <div style={{ flex: '1' }}>
                     <div style={styles.activityName}>
@@ -250,7 +258,7 @@ export default function Dashboard({
                 <CreditCard size={20} color="var(--primary-light)" />
                 <div>
                   <div style={styles.actionTitle}>Upgrade Plan</div>
-                  <div style={styles.actionDesc}>Unlock document capacities</div>
+                  <div style={styles.actionDesc}>Unlock speech capacities</div>
                 </div>
               </div>
             </div>
@@ -258,24 +266,24 @@ export default function Dashboard({
 
           {/* Subscription Usage */}
           <div className="glass-card" style={styles.card}>
-            <h3 style={{...styles.cardTitle, marginBottom: '16px'}}>Subscription & Billing</h3>
+            <h3 style={{...styles.cardTitle, marginBottom: '16px'}}>Subscription &amp; Billing</h3>
             <div style={styles.planBanner}>
               <div style={styles.planHeader}>
                 <span style={{ fontWeight: '700', fontSize: '1rem' }}>Free Plan</span>
-                <span style={styles.planLimit}>100 docs / month</span>
+                <span style={styles.planLimit}>10,000s / month</span>
               </div>
               
               {/* Progress bar */}
               <div style={styles.progressContainer}>
                 <div style={styles.progressLabels}>
                   <span>Usage this month</span>
-                  <span>{documentsTotal} / 100 used</span>
+                  <span>{totalSeconds}s / 10,000s used</span>
                 </div>
                 <div style={styles.progressBarBg}>
                   <div 
                     style={{
                       ...styles.progressBarFill, 
-                      width: `${(documentsTotal / 100) * 100}%`
+                      width: `${Math.min((parseFloat(totalSeconds) / 10000) * 100, 100)}%`
                     }}
                   ></div>
                 </div>
@@ -388,12 +396,8 @@ const styles = {
     fontSize: '0.78rem',
   },
   twoColLayout: {
-    display: 'grid',
-    gridTemplateColumns: '1.4fr 1fr',
+    display: 'flex',
     gap: '24px',
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   leftCol: {
     display: 'flex',
@@ -491,11 +495,6 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--text-primary)',
-      borderColor: 'var(--primary)',
-      background: 'rgba(139, 92, 246, 0.05)',
-    }
   },
   activityList: {
     display: 'flex',
@@ -629,9 +628,6 @@ const styles = {
     color: 'var(--text-muted)',
     cursor: 'pointer',
     padding: '4px',
-    ':hover': {
-      color: 'var(--text-primary)',
-    }
   },
   modalActions: {
     display: 'flex',

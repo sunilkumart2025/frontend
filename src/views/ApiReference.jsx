@@ -2,13 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, 
   Send, 
-  Play, 
   Copy, 
   Check, 
-  FileText, 
-  Key, 
-  Eye, 
-  Database,
   Radio
 } from 'lucide-react';
 
@@ -37,7 +32,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
         { name: 'email', type: 'string', required: true, desc: "User's email address", default: 'varish.tomar1303@gmail.com' },
         { name: 'password', type: 'string', required: true, desc: "User's password", default: 'password123' }
       ],
-      curl: `curl -X POST https://ocr.dexai.app/v1/auth/login \\
+      curl: `curl -X POST https://api.conversa.ai/v1/auth/login \\
   -H "Content-Type: application/json" \\
   -H "Accept: application/json" \\
   -d '{
@@ -72,7 +67,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
         { name: 'email', type: 'string', required: true, desc: 'Unique email address', default: 'varish.tomar1303@gmail.com' },
         { name: 'password', type: 'string', required: true, desc: 'Password string', default: 'password123' }
       ],
-      curl: `curl -X POST https://ocr.dexai.app/v1/users/register \\
+      curl: `curl -X POST https://api.conversa.ai/v1/users/register \\
   -H "Content-Type: application/json" \\
   -d '{
     "first_name": "Varish",
@@ -95,65 +90,73 @@ export default function ApiReference({ setCurrentView, showToast }) {
       }
     },
     {
-      id: 'documents-process',
+      id: 'voice-tts',
       method: 'POST',
-      path: '/documents/process',
-      title: 'Process Document',
-      desc: 'Submit a document (PDF, PNG, JPG) to queue data extraction. Processing completes asynchronously. Monitor updates via history endpoints or WebSocket.',
+      path: '/voice/tts',
+      title: 'Text to Speech Synthesis',
+      desc: 'Synthesize input text into a high-quality neural voice audio stream. Returns audio metadata and static download endpoint URLs.',
+      headers: [
+        { key: 'X-API-Key', value: 'YOUR_API_KEY', required: true },
+        { key: 'Content-Type', value: 'application/json', required: true }
+      ],
+      params: [
+        { name: 'text', type: 'string', required: true, desc: 'Input text content to convert to speech', default: 'Hello, welcome to Conversa AI voice services.' },
+        { name: 'voice_id', type: 'string', required: true, desc: 'Neural voice identifier code', default: 'en_male_neural_1' },
+        { name: 'audio_format', type: 'string', required: false, desc: 'Output audio format (mp3, wav, ogg)', default: 'mp3' }
+      ],
+      curl: `curl -X POST https://api.conversa.ai/v1/voice/tts \\
+  -H "X-API-Key: YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "text": "Hello, welcome to Conversa AI voice services.",
+    "voice_id": "en_male_neural_1",
+    "audio_format": "mp3"
+  }'`,
+      response: {
+        status: '200 OK',
+        body: {
+          request_id: "req_tts_92ba01cd",
+          status: "completed",
+          audio_url: "https://api.conversa.ai/v1/storage/req_tts_92ba01cd.mp3",
+          duration_seconds: 3.4,
+          characters_count: 46,
+          synthesized_at: "2026-06-16T09:12:00Z"
+        }
+      }
+    },
+    {
+      id: 'voice-stt',
+      method: 'POST',
+      path: '/voice/stt',
+      title: 'Speech to Text Transcription',
+      desc: 'Transcribe uploaded audio file or streaming speech segments into high-fidelity structured text dialogue transcripts.',
       headers: [
         { key: 'X-API-Key', value: 'YOUR_API_KEY', required: true },
         { key: 'Content-Type', value: 'multipart/form-data', required: true }
       ],
       params: [
-        { name: 'document_type', type: 'string', required: true, desc: 'Type of financial document: BankStatement, Receipt, or Invoice', default: 'BankStatement' },
-        { name: 'file', type: 'file', required: true, desc: 'Local binary file path to upload', default: 'AXIS.pdf' }
+        { name: 'file', type: 'file', required: true, desc: 'Local binary audio file path to upload', default: 'audio_clip.wav' },
+        { name: 'language', type: 'string', required: false, desc: 'Target audio language locale tag', default: 'en-US' },
+        { name: 'speaker_diarization', type: 'string', required: false, desc: 'Identify and separate dialogue speakers (true, false)', default: 'true' }
       ],
-      curl: `curl -X POST https://ocr.dexai.app/v1/documents/process \\
+      curl: `curl -X POST https://api.conversa.ai/v1/voice/stt \\
   -H "X-API-Key: YOUR_API_KEY" \\
-  -F "document_type=BankStatement" \\
-  -F "file=@AXIS.pdf"`,
-      response: {
-        status: '202 Accepted',
-        body: {
-          request_id: "req_83fa10bc93db",
-          filename: "AXIS.pdf",
-          file_size: 16921,
-          document_type: "BankStatement",
-          status: "pending",
-          submitted_at: "2026-06-14 15:30:22"
-        }
-      }
-    },
-    {
-      id: 'requests-status',
-      method: 'GET',
-      path: '/requests/{request_id}',
-      title: 'Get Request Status',
-      desc: 'Fetch current processing status or results of a submitted document extraction request.',
-      headers: [
-        { key: 'X-API-Key', value: 'YOUR_API_KEY', required: true }
-      ],
-      params: [
-        { name: 'request_id', type: 'string', required: true, desc: 'The unique request ID returned on file submit', default: 'req_83fa10bc93db' }
-      ],
-      curl: `curl -X GET https://ocr.dexai.app/v1/requests/req_83fa10bc93db \\
-  -H "X-API-Key: YOUR_API_KEY"`,
+  -F "file=@audio_clip.wav" \\
+  -F "language=en-US" \\
+  -F "speaker_diarization=true"`,
       response: {
         status: '200 OK',
         body: {
-          request_id: "req_83fa10bc93db",
+          request_id: "req_stt_74ca03ed",
           status: "completed",
-          document_type: "BankStatement",
-          processing_time_sec: 20.9,
-          result_data: {
-            bank_name: "AXIS Bank",
-            account_number: "912010045612398",
-            currency: "INR",
-            total_credit: 45200.0,
-            total_debit: 12890.5,
-            balance: 32309.5,
-            transactions_count: 24
-          }
+          filename: "audio_clip.wav",
+          duration_seconds: 12.8,
+          confidence: 0.992,
+          transcript: "Hello, this is a transcribed speech log using Conversa STT engines.",
+          speakers: [
+            { speaker: "Speaker 1", start: 0.0, end: 4.5, text: "Hello, this is a transcribed speech log" },
+            { speaker: "Speaker 1", start: 4.6, end: 12.8, text: "using Conversa STT engines." }
+          ]
         }
       }
     }
@@ -198,11 +201,18 @@ export default function ApiReference({ setCurrentView, showToast }) {
           finalBody.user.email = formFields['email'];
           finalBody.user.name = formFields['email'].split('@')[0];
         }
-      } else if (activeEndpoint === 'documents-process') {
-        finalBody.document_type = formFields['document_type'] || 'BankStatement';
-        finalBody.filename = formFields['file'] || 'document.pdf';
-      } else if (activeEndpoint === 'requests-status') {
-        finalBody.request_id = formFields['request_id'] || 'req_83fa10bc93db';
+      } else if (activeEndpoint === 'users-register') {
+        if (formFields['email'] !== currentEndpoint.params[2].default) {
+          finalBody.user.email = formFields['email'];
+          finalBody.user.first_name = formFields['first_name'] || 'Varish';
+          finalBody.user.last_name = formFields['last_name'] || 'Tomar';
+        }
+      } else if (activeEndpoint === 'voice-tts') {
+        finalBody.request_id = "req_tts_" + Math.random().toString(36).substring(2, 10);
+        finalBody.audio_url = `https://api.conversa.ai/v1/storage/${finalBody.request_id}.mp3`;
+      } else if (activeEndpoint === 'voice-stt') {
+        finalBody.request_id = "req_stt_" + Math.random().toString(36).substring(2, 10);
+        finalBody.filename = formFields['file'] || 'audio_clip.wav';
       }
 
       setApiResponse({
@@ -217,13 +227,13 @@ export default function ApiReference({ setCurrentView, showToast }) {
     <div style={styles.page}>
       {/* Back Header */}
       <div style={styles.header}>
-        <button onClick={() => setCurrentView('documentation')} style={styles.backBtn}>
+        <button onClick={() => setCurrentView('documentation')} style={styles.backBtn} className="api-back-btn">
           <ArrowLeft size={16} /> Back to Documentation
         </button>
-        <span style={styles.headerInfo}>Base URL: <code>https://ocr.dexai.app/v1</code></span>
+        <span style={styles.headerInfo}>Base URL: <code>https://api.conversa.ai/v1</code></span>
       </div>
 
-      <div style={styles.layout}>
+      <div style={styles.layout} className="api-ref-layout-grid">
         {/* Sidebar Endpoints List */}
         <aside style={styles.sidebar}>
           <h3 style={styles.sidebarTitle}>Endpoints</h3>
@@ -236,6 +246,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
                     ...styles.endpointBtn,
                     ...(activeEndpoint === ep.id ? styles.endpointBtnActive : {})
                   }}
+                  className="api-endpoint-btn"
                 >
                   <span style={{
                     ...styles.methodBadge,
@@ -254,7 +265,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
             <li>
               <div style={styles.wsItem}>
                 <span style={styles.wsBadge}>WS</span>
-                <span style={styles.pathText}>/requests/stream</span>
+                <span style={styles.pathText}>/voice/stream</span>
               </div>
             </li>
           </ul>
@@ -304,7 +315,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
             </table>
 
             {/* Code Snippets Section */}
-            <div style={styles.snippetsGrid}>
+            <div style={styles.snippetsGrid} className="api-ref-snippets-grid">
               {/* cURL Example */}
               <div style={styles.snippetCol}>
                 <h4 style={styles.snippetHeader}>cURL Example</h4>
@@ -364,7 +375,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
                   <input 
                     type="text" 
                     readOnly 
-                    value={`https://ocr.dexai.app/v1${currentEndpoint.path}`}
+                    value={`https://api.conversa.ai/v1${currentEndpoint.path}`}
                     style={styles.requestUrlInput} 
                   />
                   <button 
@@ -386,16 +397,26 @@ export default function ApiReference({ setCurrentView, showToast }) {
                           <label className="form-label">
                             {param.name} {param.required && <span style={{ color: 'var(--error)' }}>*</span>}
                           </label>
-                          {param.name === 'document_type' ? (
+                          {param.name === 'audio_format' ? (
                             <select 
-                              value={formFields[param.name] || 'BankStatement'}
+                              value={formFields[param.name] || 'mp3'}
                               onChange={(e) => handleFieldChange(param.name, e.target.value)}
                               className="form-input"
                               style={{ background: 'var(--bg-main)' }}
                             >
-                              <option value="BankStatement">BankStatement</option>
-                              <option value="Receipt">Receipt</option>
-                              <option value="Invoice">Invoice</option>
+                              <option value="mp3">mp3</option>
+                              <option value="wav">wav</option>
+                              <option value="ogg">ogg</option>
+                            </select>
+                          ) : param.name === 'speaker_diarization' ? (
+                            <select 
+                              value={formFields[param.name] || 'true'}
+                              onChange={(e) => handleFieldChange(param.name, e.target.value)}
+                              className="form-input"
+                              style={{ background: 'var(--bg-main)' }}
+                            >
+                              <option value="true">true</option>
+                              <option value="false">false</option>
                             </select>
                           ) : (
                             <input 
@@ -481,9 +502,6 @@ const styles = {
     alignItems: 'center',
     gap: '6px',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--text-primary)',
-    }
   },
   headerInfo: {
     fontSize: '0.85rem',
@@ -493,9 +511,6 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: '280px 1fr',
     gap: '40px',
-    '@media (max-width: 768px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   sidebar: {
     display: 'flex',
@@ -530,9 +545,6 @@ const styles = {
     gap: '10px',
     textAlign: 'left',
     transition: 'var(--transition)',
-    ':hover': {
-      background: 'rgba(255,255,255,0.02)',
-    }
   },
   endpointBtnActive: {
     background: 'rgba(255,255,255,0.04)',
@@ -658,9 +670,6 @@ const styles = {
     gridTemplateColumns: '1fr 1fr',
     gap: '24px',
     marginBottom: '48px',
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: '1fr',
-    },
   },
   snippetCol: {
     display: 'flex',

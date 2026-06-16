@@ -38,8 +38,8 @@ export default function SignUp({ setCurrentView, login, showToast }) {
   };
 
   const benefits = [
-    'Free API key with 100 document scans',
-    'Access to all document types (PDF, JPG, PNG)',
+    'Free API key with 1,000 audio seconds',
+    'Access to TTS synthesis & STT transcribing models',
     'Complete interactive API sandbox documentation',
     '24/7 developer email & chat support'
   ];
@@ -50,7 +50,7 @@ export default function SignUp({ setCurrentView, login, showToast }) {
         {/* Left Side: Form */}
         <div style={styles.card} className="glass-card">
           <h2 style={styles.title}>Create Your Account</h2>
-          <p style={styles.sub}>Start processing financial documents with AI</p>
+          <p style={styles.sub}>Start integrating neural speech tools with AI</p>
 
           <form onSubmit={handleSubmit} style={styles.form}>
             {/* First / Last Name */}
@@ -155,7 +155,7 @@ export default function SignUp({ setCurrentView, login, showToast }) {
 
           <div style={styles.footer}>
             Already have an account?{' '}
-            <button onClick={() => setCurrentView('signin')} style={styles.linkBtn}>
+            <button onClick={() => setCurrentView('signin')} style={styles.linkBtn} className="auth-link-btn">
               Sign In
             </button>
           </div>
@@ -253,10 +253,6 @@ const styles = {
     fontSize: 'inherit',
     fontWeight: '600',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--primary)',
-      textDecoration: 'underline',
-    }
   },
   benefitsCol: {
     flex: '1',

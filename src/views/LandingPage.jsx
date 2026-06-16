@@ -14,7 +14,10 @@ import {
   Minus, 
   MessageSquare, 
   Star,
-  Users
+  Users,
+  Volume2,
+  Mic,
+  Sparkles
 } from 'lucide-react';
 
 export default function LandingPage({ setCurrentView, showToast }) {
@@ -37,28 +40,28 @@ export default function LandingPage({ setCurrentView, showToast }) {
 
   const faqs = [
     {
-      q: "What types of documents can FinanceAI process?",
-      a: "FinanceAI can process bank statements, receipts, invoices, credit card statements, purchase orders, and other financial documents in PDF, PNG, JPEG, and TIFF formats. Our AI is trained on millions of documents and continuously improving."
+      q: "What audio formats does Conversa AI support?",
+      a: "Conversa AI supports WAV, MP3, AAC, FLAC, M4A, and OGG formats for transcribing (Speech-to-Text). For voice synthesis (Text-to-Speech), we generate outputs in high-quality MP3 and WAV files."
     },
     {
-      q: "How accurate is the data extraction?",
-      a: "Our AI achieves 99.5% accuracy on standard financial documents. For complex or low-quality documents, we provide confidence scores for each extracted field, and our review interface makes it easy to verify and correct data if needed."
+      q: "How natural do the synthesized voices sound?",
+      a: "Our voices are powered by state-of-the-art neural speech models that articulate human pitch, tone, and inflection. We offer multiple voice models with adjustable speeds and emotional profiles."
     },
     {
-      q: "Is my financial data secure?",
-      a: "Yes. We use bank-level encryption (AES-256) for data at rest and TLS 1.3 for data in transit. We are SOC 2 Type II certified and GDPR compliant. Your documents are automatically deleted after 30 days unless you choose to keep them longer."
+      q: "Can I clone my own voice?",
+      a: "Yes. With a short 10-second vocal sample, Conversa AI can securely capture your voice signature to build a cloned model that you can use for text synthesis."
     },
     {
-      q: "How long does processing take?",
-      a: "Most documents are processed in 2-5 seconds. Batch processing of hundreds of documents is handled asynchronously, with real-time webhooks notifying you when processing is complete."
+      q: "Is my vocal data protected and secure?",
+      a: "Yes, we prioritize security. All audio recordings, transcripts, and voice clones are encrypted end-to-end. We never use your private voice samples to train public models."
     },
     {
-      q: "Can I integrate FinanceAI with my accounting software?",
-      a: "Yes! We offer a comprehensive REST API, native integrations with QuickBooks, Xero, Sage, and other major accounting platforms, plus Zapier support for connecting to thousands of other apps."
+      q: "What is the processing speed of transcribing?",
+      a: "Speech-to-Text transcribing runs at about 10x real-time speed. A 10-minute meeting file compiles into text in under a minute."
     },
     {
       q: "What support options are available?",
-      a: "All plans include email support with 24-hour response time. Pro and Enterprise plans get priority support, dedicated account managers, and phone support. Our developer documentation and API guides are available 24/7."
+      a: "We provide detailed API documentation and 24/7 developer forum access. Pro and Enterprise customers get dedicated support channels and custom model assistance."
     }
   ];
 
@@ -68,16 +71,16 @@ export default function LandingPage({ setCurrentView, showToast }) {
       <section style={styles.heroSection} className="animate-fade-in">
         <div style={styles.heroBadge}>
           <div style={styles.heroBadgeDot}></div>
-          <span style={styles.heroBadgeText}>Trusted by 8,500+ Accounting Professionals</span>
+          <span style={styles.heroBadgeText}>Trusted by 10,000+ Developers &amp; Creators</span>
         </div>
 
         <h1 className="hero-glow-title" style={styles.heroTitle}>
-          AI-Powered Financial <br />
-          Document Processing
+          AI-Powered Speech <br />
+          &amp; Voice Generation
         </h1>
 
         <p style={styles.heroSub}>
-          Automatically extract data from bank statements, receipts, and invoices. Perfect for accountants and financial professionals who need to process financial documents efficiently.
+          Automatically synthesize text into natural-sounding speech and transcribe audio streams to text. Perfect for content creators, customer support, and developers who need high-fidelity voice automation.
         </p>
 
         <div style={styles.heroActions}>
@@ -109,9 +112,9 @@ export default function LandingPage({ setCurrentView, showToast }) {
       <section style={styles.section} id="features">
         <div style={styles.sectionHeader}>
           <span className="badge badge-purple">Powerful Features</span>
-          <h2 style={styles.sectionTitle}>Powerful Document Processing</h2>
+          <h2 style={styles.sectionTitle}>Advanced Voice Processing</h2>
           <p style={styles.sectionDesc}>
-            Extract structured data from any financial document with our advanced AI technology.
+            Convert between text and speech with state-of-the-art neural audio models.
           </p>
         </div>
 
@@ -119,48 +122,48 @@ export default function LandingPage({ setCurrentView, showToast }) {
           {/* Card 1 */}
           <div className="glass-card glass-card-hover" style={styles.featureCard}>
             <div style={{ ...styles.cardIconBox, background: 'rgba(139, 92, 246, 0.1)' }}>
-              <Coins size={24} color="var(--primary)" />
+              <Volume2 size={24} color="var(--primary)" />
             </div>
-            <h3 style={styles.cardTitle}>Bank Statements</h3>
+            <h3 style={styles.cardTitle}>Text to Speech</h3>
             <p style={styles.cardDesc}>
-              Automatically extract transaction details, account balances, and payment information from bank statements.
+              Automatically convert written text into natural, highly realistic audio outputs across multiple languages.
             </p>
             <ul style={styles.cardBulletList}>
-              <li><Check size={14} color="var(--success)" /> Transaction amounts</li>
-              <li><Check size={14} color="var(--success)" /> Debit/Credit classification</li>
-              <li><Check size={14} color="var(--success)" /> Account details</li>
+              <li><Check size={14} color="var(--success)" /> 50+ languages &amp; accents</li>
+              <li><Check size={14} color="var(--success)" /> Real-time vocal articulation</li>
+              <li><Check size={14} color="var(--success)" /> Adjustable speed &amp; tone</li>
             </ul>
           </div>
 
           {/* Card 2 */}
           <div className="glass-card glass-card-hover" style={styles.featureCard}>
             <div style={{ ...styles.cardIconBox, background: 'rgba(236, 72, 153, 0.1)' }}>
-              <Receipt size={24} color="var(--secondary)" />
+              <Mic size={24} color="var(--secondary)" />
             </div>
-            <h3 style={styles.cardTitle}>Receipts</h3>
+            <h3 style={styles.cardTitle}>Speech to Text</h3>
             <p style={styles.cardDesc}>
-              Extract merchant information, purchase amounts, dates, and itemized details from receipts.
+              Transcribe audio recordings or live speech streams into high-fidelity formatted text transcripts.
             </p>
             <ul style={styles.cardBulletList}>
-              <li><Check size={14} color="var(--success)" /> Merchant names</li>
-              <li><Check size={14} color="var(--success)" /> Total amounts</li>
-              <li><Check size={14} color="var(--success)" /> Purchase dates</li>
+              <li><Check size={14} color="var(--success)" /> Speaker identification</li>
+              <li><Check size={14} color="var(--success)" /> Auto punctuation &amp; formatting</li>
+              <li><Check size={14} color="var(--success)" /> Audio file upload support</li>
             </ul>
           </div>
 
           {/* Card 3 */}
           <div className="glass-card glass-card-hover" style={styles.featureCard}>
             <div style={{ ...styles.cardIconBox, background: 'rgba(59, 130, 246, 0.1)' }}>
-              <FileText size={24} color="var(--info)" />
+              <Sparkles size={24} color="var(--info)" />
             </div>
-            <h3 style={styles.cardTitle}>Invoices</h3>
+            <h3 style={styles.cardTitle}>Voice Cloning</h3>
             <p style={styles.cardDesc}>
-              Parse supplier information, invoice numbers, amounts, and payment terms from invoices.
+              Clone vocal signatures from short audio samples to generate personalized responses and branded narrations.
             </p>
             <ul style={styles.cardBulletList}>
-              <li><Check size={14} color="var(--success)" /> Supplier details</li>
-              <li><Check size={14} color="var(--success)" /> Invoice amounts</li>
-              <li><Check size={14} color="var(--success)" /> Payment terms</li>
+              <li><Check size={14} color="var(--success)" /> Fast 10-second sample clone</li>
+              <li><Check size={14} color="var(--success)" /> Natural inflection match</li>
+              <li><Check size={14} color="var(--success)" /> Secure voice ownership</li>
             </ul>
           </div>
         </div>
@@ -169,9 +172,9 @@ export default function LandingPage({ setCurrentView, showToast }) {
       {/* Built For Every Workflow */}
       <section style={{...styles.section, background: 'rgba(255,255,255,0.01)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)'}}>
         <div style={styles.sectionHeader}>
-          <h2 style={styles.sectionTitle}>Built for Every Financial Workflow</h2>
+          <h2 style={styles.sectionTitle}>Built for Every Speech Workflow</h2>
           <p style={styles.sectionDesc}>
-            Whether you're an accountant, bookkeeper, or finance professional, FinanceAI streams your document processing.
+            Whether you're a content creator, developer, or enterprise support team, Conversa AI streams your audio operations.
           </p>
         </div>
 
@@ -179,30 +182,30 @@ export default function LandingPage({ setCurrentView, showToast }) {
           <div style={styles.workflowItem}>
             <div style={styles.workflowHeader}>
               <Briefcase size={18} color="var(--primary-light)" />
-              <h4 style={styles.workflowTitle}>Accounting Firms</h4>
+              <h4 style={styles.workflowTitle}>Content Creators</h4>
             </div>
-            <p style={styles.workflowText}>Process client files at scale with advanced batch uploads and custom exports.</p>
+            <p style={styles.workflowText}>Generate realistic voiceovers for videos, narrate articles, and translate podcasts instantly.</p>
           </div>
           <div style={styles.workflowItem}>
             <div style={styles.workflowHeader}>
               <Building size={18} color="var(--primary-light)" />
-              <h4 style={styles.workflowTitle}>Small Businesses</h4>
+              <h4 style={styles.workflowTitle}>Customer Support</h4>
             </div>
-            <p style={styles.workflowText}>Save hours of bookkeeping using automated receipt matches and categorization.</p>
+            <p style={styles.workflowText}>Power smart IVR voice responders and read client chats aloud to operators automatically.</p>
           </div>
           <div style={styles.workflowItem}>
             <div style={styles.workflowHeader}>
               <Lock size={18} color="var(--primary-light)" />
               <h4 style={styles.workflowTitle}>Enterprise Teams</h4>
             </div>
-            <p style={styles.workflowText}>Secure document parsing backed by SSO, SOC 2 compliance, and direct logs access.</p>
+            <p style={styles.workflowText}>Deploy secure voice synthesis backed by compliance SLAs, SSO, and private storage networks.</p>
           </div>
           <div style={styles.workflowItem}>
             <div style={styles.workflowHeader}>
               <Code size={18} color="var(--primary-light)" />
-              <h4 style={styles.workflowTitle}>FinTech Applications</h4>
+              <h4 style={styles.workflowTitle}>Developers API</h4>
             </div>
-            <p style={styles.workflowText}>Power your own software with our developer-friendly REST API and SDK wrappers.</p>
+            <p style={styles.workflowText}>Power your own software with our developer-friendly voice generation endpoints and SDKs.</p>
           </div>
         </div>
       </section>
@@ -216,31 +219,31 @@ export default function LandingPage({ setCurrentView, showToast }) {
 
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
-            <div style={styles.statNum}>15M+</div>
-            <div style={styles.statLabel}>Documents Processed</div>
+            <div style={styles.statNum}>50M+</div>
+            <div style={styles.statLabel}>Audio Seconds Processed</div>
           </div>
           <div style={styles.statCard}>
             <div style={styles.statNum}>99.5%</div>
-            <div style={styles.statLabel}>Accuracy Rate</div>
+            <div style={styles.statLabel}>Word Accuracy Rate</div>
           </div>
           <div style={styles.statCard}>
-            <div style={styles.statNum}>8,500+</div>
-            <div style={styles.statLabel}>Active Users</div>
+            <div style={styles.statNum}>10,000+</div>
+            <div style={styles.statLabel}>Active Accounts</div>
           </div>
           <div style={styles.statCard}>
-            <div style={styles.statNum}>150+</div>
-            <div style={styles.statLabel}>Countries Served</div>
+            <div style={styles.statNum}>50+</div>
+            <div style={styles.statLabel}>Languages Supported</div>
           </div>
         </div>
 
         <div style={{ ...styles.statsGrid, marginTop: '30px', borderTop: '1px solid var(--border-color)', paddingTop: '30px' }}>
           <div style={styles.secondaryStatCard}>
             <div style={styles.secondaryStatNum}>85%</div>
-            <div style={styles.secondaryStatLabel}>Time Saved on Data Entry</div>
+            <div style={styles.secondaryStatLabel}>Reduction in Dubbing Cost</div>
           </div>
           <div style={styles.secondaryStatCard}>
-            <div style={styles.secondaryStatNum}>3 Sec</div>
-            <div style={styles.secondaryStatLabel}>Average Processing Time</div>
+            <div style={styles.secondaryStatNum}>50ms</div>
+            <div style={styles.secondaryStatLabel}>Synthesis Average Latency</div>
           </div>
           <div style={styles.secondaryStatCard}>
             <div style={styles.secondaryStatNum}>24/7</div>
@@ -254,21 +257,21 @@ export default function LandingPage({ setCurrentView, showToast }) {
         <div style={styles.sectionHeader}>
           <span className="badge badge-purple">Why Choose Our API?</span>
           <h2 style={styles.sectionTitle}>Built for High-Scale Applications</h2>
-          <p style={styles.sectionDesc}>Fast, reliable API infrastructure designed for developers and enterprise scale.</p>
+          <p style={styles.sectionDesc}>Fast, reliable voice infrastructure designed for developers and enterprise scale.</p>
         </div>
 
         <div style={styles.whyGrid}>
           <div className="glass-card" style={styles.whyCard}>
             <h4 style={styles.whyTitle}>Lightning Fast</h4>
-            <p style={styles.whyDesc}>Deploy state-of-the-art AI extraction that responds in milliseconds to power immediate dashboards.</p>
+            <p style={styles.whyDesc}>Deploy state-of-the-art neural speech synthesis that responds in milliseconds to support real-time interactions.</p>
           </div>
           <div className="glass-card" style={styles.whyCard}>
-            <h4 style={styles.whyTitle}>Secure & Compliant</h4>
-            <p style={styles.whyDesc}>Full SOC 2 validation, end-to-end data encryption, and options to disable persistent logs storage.</p>
+            <h4 style={styles.whyTitle}>Secure &amp; Compliant</h4>
+            <p style={styles.whyDesc}>Full end-to-end data encryption, private key auth, and strict voice data privacy compliance guarantees.</p>
           </div>
           <div className="glass-card" style={styles.whyCard}>
             <h4 style={styles.whyTitle}>99.5% Accurate</h4>
-            <p style={styles.whyDesc}>Intelligent contextual processing that correctly understands currencies, line-items, and merchant details.</p>
+            <p style={styles.whyDesc}>Intelligent contextual speech processors that correctly parse names, accents, and punctuation marks.</p>
           </div>
         </div>
       </section>
@@ -276,8 +279,8 @@ export default function LandingPage({ setCurrentView, showToast }) {
       {/* Customer Stories / Testimonials */}
       <section style={{...styles.section, background: 'rgba(139, 92, 246, 0.02)', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)'}}>
         <div style={styles.sectionHeader}>
-          <h2 style={styles.sectionTitle}>Trusted by Accounting Professionals</h2>
-          <p style={styles.sectionDesc}>See what our partners say about the speed and reliability of FinanceAI.</p>
+          <h2 style={styles.sectionTitle}>Trusted by Modern Content Teams</h2>
+          <p style={styles.sectionDesc}>See what our partners say about the speed and vocal quality of Conversa AI.</p>
         </div>
 
         <div style={styles.testimonialsGrid}>
@@ -290,13 +293,13 @@ export default function LandingPage({ setCurrentView, showToast }) {
               <Star size={16} fill="var(--warning)" color="var(--warning)" />
             </div>
             <p style={styles.testimonialText}>
-              "FinanceAI has revolutionized our document workflow. We've cut manual processing time down by 80%. The accuracy is unbelievable."
+              "Conversa AI has revolutionized our content workflows. We generate natural narrations for our audiobooks in seconds. The accents sound completely human."
             </p>
             <div style={styles.testimonialUser}>
               <div style={styles.userInitial}>SM</div>
               <div>
                 <div style={styles.userName}>Sarah Mitchell</div>
-                <div style={styles.userRole}>Founder, Mitchell Advisory</div>
+                <div style={styles.userRole}>Creative Director, Mitchell Audiobooks</div>
               </div>
             </div>
           </div>
@@ -310,13 +313,13 @@ export default function LandingPage({ setCurrentView, showToast }) {
               <Star size={16} fill="var(--warning)" color="var(--warning)" />
             </div>
             <p style={styles.testimonialText}>
-              "The API integration was exceptionally smooth. Up and running in under a day. Support is top-notch and prompt."
+              "Integrating the Speech to Text API took us less than an hour. It transcribes hours of customer support logs with 99.5% accuracy."
             </p>
             <div style={styles.testimonialUser}>
               <div style={styles.userInitial}>DK</div>
               <div>
                 <div style={styles.userName}>David Kim</div>
-                <div style={styles.userRole}>CTO, PayFlow Ledger</div>
+                <div style={styles.userRole}>CTO, VoiceFlow Solutions</div>
               </div>
             </div>
           </div>
@@ -327,7 +330,7 @@ export default function LandingPage({ setCurrentView, showToast }) {
       <section style={styles.section}>
         <div style={styles.sectionHeader}>
           <h2 style={styles.sectionTitle}>Frequently Asked Questions</h2>
-          <p style={styles.sectionDesc}>Everything you need to know about FinanceAI.</p>
+          <p style={styles.sectionDesc}>Everything you need to know about Conversa AI.</p>
         </div>
 
         <div style={styles.faqWrapper}>
@@ -362,9 +365,9 @@ export default function LandingPage({ setCurrentView, showToast }) {
       {/* CTA final banner */}
       <section style={styles.ctaSection}>
         <div style={styles.ctaCard}>
-          <h2 style={styles.ctaTitle}>Ready to Transform Your Document Processing?</h2>
+          <h2 style={styles.ctaTitle}>Ready to Transform Your Voice Workflows?</h2>
           <p style={styles.ctaDesc}>
-            Join thousands of accountants who trust our AI to process their bank statements, receipts, and invoices.
+            Join thousands of developers and creators who trust our AI to synthesize and transcribe voice streams.
           </p>
           <div style={styles.ctaActions}>
             <button onClick={startTrial} className="btn btn-primary" style={{ padding: '14px 28px', fontSize: '1.05rem' }}>

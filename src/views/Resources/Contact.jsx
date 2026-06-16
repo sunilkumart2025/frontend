@@ -4,7 +4,6 @@ import {
   Phone, 
   MapPin, 
   Send, 
-  Check, 
   Plus, 
   Minus,
   Globe
@@ -44,8 +43,8 @@ export default function Contact({ showToast }) {
   };
 
   const faqs = [
-    { q: "How fast can I get access to the API?", a: "Instantly! Once you sign up for a free developer account, you can generate your API key immediately and start making test requests." },
-    { q: "Do you offer custom pricing?", a: "Yes, for organizations processing more than 10,000 documents per month, we offer custom volume discounts, SLA guarantees, and dedicated server options. Contact our sales team using the form." },
+    { q: "How fast can I get access to the API?", a: "Instantly! Once you sign up for a free developer account, you can generate your API key immediately and start making test speech requests." },
+    { q: "Do you offer custom pricing?", a: "Yes, for organizations processing more than 10,000,000 audio seconds per month, we offer custom volume discounts, SLA guarantees, and dedicated servers. Contact our sales team using this form." },
     { q: "Is there support for enterprise SSO?", a: "Yes, our Enterprise tier supports SAML-based single sign-on (SSO) with providers like Okta, Azure AD, and Google Workspace." }
   ];
 
@@ -61,11 +60,11 @@ export default function Contact({ showToast }) {
         <div style={styles.header}>
           <h1 style={styles.title}>Get in Touch</h1>
           <p style={styles.sub}>
-            Have questions about our AI-powered financial document processing API? We'd love to hear from you and help you find the right solution.
+            Have questions about our AI-powered Speech-to-Text and Text-to-Speech API? We'd love to hear from you and help you find the right solution.
           </p>
         </div>
 
-        <div style={styles.grid}>
+        <div className="contact-grid-row" style={styles.grid}>
           {/* Left Column: Contact info */}
           <div style={styles.infoCol}>
             <div className="glass-card" style={styles.infoCard}>
@@ -77,8 +76,8 @@ export default function Contact({ showToast }) {
                   </div>
                   <div>
                     <div style={styles.infoLabel}>Email</div>
-                    <a href="mailto:support@financeai.com" style={styles.infoLink}>support@financeai.com</a>
-                    <a href="mailto:sales@financeai.com" style={{...styles.infoLink, display: 'block', marginTop: '4px'}}>sales@financeai.com</a>
+                    <a href="mailto:support@conversa.ai" style={styles.infoLink} className="contact-info-link">support@conversa.ai</a>
+                    <a href="mailto:sales@conversa.ai" style={{...styles.infoLink, display: 'block', marginTop: '4px'}} className="contact-info-link">sales@conversa.ai</a>
                   </div>
                 </div>
 
@@ -270,13 +269,7 @@ const styles = {
     lineHeight: '1.6',
   },
   grid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1.3fr',
-    gap: '32px',
-    alignItems: 'start',
-    '@media (max-width: 900px)': {
-      gridTemplateColumns: '1fr',
-    },
+    // Defined dynamically in index.css (.contact-grid-row)
   },
   infoCol: {
     display: 'flex',
@@ -324,9 +317,6 @@ const styles = {
     color: 'var(--text-primary)',
     textDecoration: 'none',
     transition: 'var(--transition)',
-    ':hover': {
-      color: 'var(--primary-light)',
-    }
   },
   infoVal: {
     fontSize: '0.95rem',

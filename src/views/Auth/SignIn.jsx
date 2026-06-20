@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
+import { login as apiLogin } from '../../services/api';
 
 export default function SignIn({ setCurrentView, login, showToast }) {
   const [email, setEmail] = useState('');
@@ -7,41 +8,41 @@ export default function SignIn({ setCurrentView, login, showToast }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [error, setError] = useState('');
 
-  const testEmails = [
-    'varish.tomar1303@gmail.com',
-    'capjun.dev@gmail.com',
-    'varish.tomar.3303@gmail.com'
-  ];
-
-  const handleSuggestionClick = (selectedEmail) => {
-    setEmail(selectedEmail);
-    setPassword('password123'); // Default password for demo
-    setShowSuggestions(false);
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !password) return;
-
+    setError('');
     setIsSubmitting(true);
-    
-    // Simulate server login timing
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      // POST /login → { access_token, token_type, api_key, expires_in }
+      const data = await apiLogin(email, password);
+
       setLoginSuccess(true);
       showToast('Login successful!', 'success');
-      
-      // Complete redirect after 1.5s
+
+      // Store token + api_key in session for use across app
+      sessionStorage.setItem('access_token', data.access_token);
+      sessionStorage.setItem('api_key', data.api_key);
+
       setTimeout(() => {
         login({
           name: email.split('@')[0].split('.').map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(' '),
-          email: email
+          email: email,
+          api_key: data.api_key,
+          access_token: data.access_token,
         });
         setCurrentView('dashboard');
-      }, 1500);
-    }, 1200);
+      }, 1200);
+
+    } catch (err) {
+      setError(err.message || 'Invalid email or password. Please try again.');
+      showToast(err.message || 'Login failed', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -51,38 +52,21 @@ export default function SignIn({ setCurrentView, login, showToast }) {
         <p style={styles.sub}>Sign in to access your Conversa API dashboard</p>
 
         <form onSubmit={handleSubmit} style={styles.form}>
-          {/* Email input with autocomplete triggers */}
-          <div className="form-group" style={{ position: 'relative' }}>
+          {/* Email */}
+          <div className="form-group">
             <label className="form-label">Email Address</label>
             <div style={styles.inputWrapper}>
               <Mail size={16} color="var(--text-muted)" style={styles.inputIcon} />
-              <input 
-                type="email" 
+              <input
+                type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setShowSuggestions(true)}
-                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                 placeholder="Enter your email"
-                className="form-input" 
+                className="form-input"
                 style={styles.input}
               />
             </div>
-            
-            {showSuggestions && (
-              <div style={styles.suggestions} className="animate-fade-in">
-                {testEmails.map((em) => (
-                  <div 
-                    key={em} 
-                    onMouseDown={() => handleSuggestionClick(em)}
-                    style={styles.suggestionItem}
-                    className="auth-suggestion-item"
-                  >
-                    {em}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           {/* Password */}
@@ -90,18 +74,18 @@ export default function SignIn({ setCurrentView, login, showToast }) {
             <label className="form-label">Password</label>
             <div style={styles.inputWrapper}>
               <Lock size={16} color="var(--text-muted)" style={styles.inputIcon} />
-              <input 
-                type={showPassword ? 'text' : 'password'} 
+              <input
+                type={showPassword ? 'text' : 'password'}
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your password"
-                className="form-input" 
+                className="form-input"
                 style={styles.input}
               />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(!showPassword)} 
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
                 style={styles.eyeBtn}
                 className="auth-eye-btn"
               >
@@ -116,12 +100,25 @@ export default function SignIn({ setCurrentView, login, showToast }) {
               <input type="checkbox" style={styles.checkbox} />
               <span>Remember me</span>
             </label>
-            <button type="button" onClick={() => showToast('Password reset link sent (simulated).', 'info')} style={styles.linkBtn} className="auth-link-btn">
+            <button
+              type="button"
+              onClick={() => showToast('Password reset coming soon.', 'info')}
+              style={styles.linkBtn}
+              className="auth-link-btn"
+            >
               Forgot password?
             </button>
           </div>
 
-          {/* Success indicator inside forms */}
+          {/* Error Banner */}
+          {error && (
+            <div style={styles.errorBanner} className="animate-fade-in">
+              <AlertCircle size={16} color="#ef4444" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Success Banner */}
           {loginSuccess && (
             <div style={styles.successBanner} className="animate-fade-in">
               <CheckCircle2 size={16} color="var(--success)" />
@@ -129,11 +126,10 @@ export default function SignIn({ setCurrentView, login, showToast }) {
             </div>
           )}
 
-          {/* Button */}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSubmitting || loginSuccess}
-            className="btn btn-primary" 
+            className="btn btn-primary"
             style={{ width: '100%', padding: '12px', marginTop: '10px' }}
           >
             {isSubmitting ? 'Signing In...' : loginSuccess ? 'Redirecting...' : 'Sign In'}
@@ -226,27 +222,6 @@ const styles = {
     justifyContent: 'center',
     padding: '4px',
   },
-  suggestions: {
-    position: 'absolute',
-    top: '100%',
-    left: 0,
-    width: '100%',
-    background: '#151421',
-    border: '1px solid var(--border-color)',
-    borderRadius: '8px',
-    marginTop: '4px',
-    zIndex: 10,
-    boxShadow: '0 10px 20px rgba(0,0,0,0.5)',
-    overflow: 'hidden',
-  },
-  suggestionItem: {
-    padding: '10px 16px',
-    fontSize: '0.88rem',
-    color: 'var(--text-secondary)',
-    cursor: 'pointer',
-    textAlign: 'left',
-    transition: 'var(--transition)',
-  },
   optionsRow: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -272,6 +247,18 @@ const styles = {
     fontSize: 'inherit',
     fontWeight: '600',
     transition: 'var(--transition)',
+  },
+  errorBanner: {
+    background: 'rgba(239, 68, 68, 0.08)',
+    border: '1px solid rgba(239, 68, 68, 0.25)',
+    borderRadius: '8px',
+    padding: '12px',
+    marginBottom: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '10px',
+    fontSize: '0.85rem',
+    color: '#fca5a5',
   },
   successBanner: {
     background: 'var(--success-glow)',

@@ -49,6 +49,8 @@ export default function App() {
 
   const logout = () => {
     setUser(null);
+    sessionStorage.removeItem('access_token');
+    sessionStorage.removeItem('api_key');
   };
 
   // Toast notifications manager
@@ -91,6 +93,7 @@ export default function App() {
         return user ? (
           <Dashboard 
             setCurrentView={setCurrentView} 
+            user={user}
             apiKeys={apiKeys} 
             setApiKeys={setApiKeys}
             historyData={historyData}
@@ -108,19 +111,19 @@ export default function App() {
         );
       case 'voice-tools':
         return user ? (
-          <VoiceTools showToast={showToast} defaultSubView="hub" />
+          <VoiceTools showToast={showToast} defaultSubView="hub" user={user} setHistoryData={setHistoryData} />
         ) : (
           <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
         );
       case 'voice-tools-tts':
         return user ? (
-          <VoiceTools showToast={showToast} defaultSubView="tts" />
+          <VoiceTools showToast={showToast} defaultSubView="tts" user={user} setHistoryData={setHistoryData} />
         ) : (
           <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
         );
       case 'voice-tools-stt':
         return user ? (
-          <VoiceTools showToast={showToast} defaultSubView="stt" />
+          <VoiceTools showToast={showToast} defaultSubView="stt" user={user} setHistoryData={setHistoryData} />
         ) : (
           <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
         );

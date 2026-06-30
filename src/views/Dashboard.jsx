@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, 
   Copy, 
@@ -18,9 +18,11 @@ import {
   X,
   Mic
 } from 'lucide-react';
+import { getProfile } from '../services/api';
 
 export default function Dashboard({ 
-  setCurrentView, 
+  navigate, 
+  user,
   apiKeys, 
   setApiKeys, 
   historyData, 
@@ -30,17 +32,40 @@ export default function Dashboard({
   const [copiedKey, setCopiedKey] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newKeyName, setNewKeyName] = useState('');
+  const [profile, setProfile] = useState(user);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const token = sessionStorage.getItem('access_token');
+      if (token) {
+        try {
+          const data = await getProfile(token);
+          setProfile(data);
+        } catch (e) {
+          console.error("Failed to load profile:", e);
+        }
+      }
+    };
+    fetchProfile();
+  }, [user]);
   
   // Calculate voice processing counts dynamically from historyData
   const ttsCount = historyData.filter(d => d.type === 'Text to Speech').length;
   const sttCount = historyData.filter(d => d.type === 'Speech to Text').length;
-  const totalRequests = ttsCount + sttCount;
+  const totalRequests = profile?.total_processing || (ttsCount + sttCount);
   
   // Calculate total seconds processed
   const totalSeconds = historyData.reduce((acc, d) => {
     const secs = parseFloat(d.time) || 0;
     return acc + secs;
   }, 0).toFixed(1);
+
+  const displayKeys = apiKeys.map((k, index) => {
+    if (index === 0 && profile?.api_key) {
+      return { ...k, key: profile.api_key };
+    }
+    return k;
+  });
 
   const toggleKeyVisibility = (id) => {
     setApiKeys(prev => prev.map(k => k.id === id ? { ...k, visible: !k.visible } : k));
@@ -159,7 +184,7 @@ export default function Dashboard({
             </div>
             
             <div style={styles.keysList}>
-              {apiKeys.map((k) => (
+              {displayKeys.map((k) => (
                 <div key={k.id} style={styles.keyRow}>
                   <div style={styles.keyMeta}>
                     <div style={styles.keyNameRow}>
@@ -196,7 +221,7 @@ export default function Dashboard({
           <div className="glass-card" style={styles.card}>
             <div style={styles.cardHeader}>
               <h3 style={styles.cardTitle}>Recent Activity</h3>
-              <button onClick={() => setCurrentView('history')} style={styles.viewAllBtn}>
+              <button onClick={() => navigate('/history')} style={styles.viewAllBtn}>
                 View All <ArrowRight size={14} />
               </button>
             </div>
@@ -230,7 +255,7 @@ export default function Dashboard({
           <div className="glass-card" style={styles.card}>
             <h3 style={{...styles.cardTitle, marginBottom: '16px'}}>Quick Actions</h3>
             <div style={styles.actionsGrid}>
-              <div onClick={() => setCurrentView('documentation')} style={styles.actionItem} className="glass-card-hover">
+              <div onClick={() => navigate('/documentation')} style={styles.actionItem} className="glass-card-hover">
                 <BookOpen size={20} color="var(--primary-light)" />
                 <div>
                   <div style={styles.actionTitle}>API Docs</div>
@@ -238,7 +263,7 @@ export default function Dashboard({
                 </div>
               </div>
               
-              <div onClick={() => setCurrentView('history')} style={styles.actionItem} className="glass-card-hover">
+              <div onClick={() => navigate('/history')} style={styles.actionItem} className="glass-card-hover">
                 <History size={20} color="var(--primary-light)" />
                 <div>
                   <div style={styles.actionTitle}>History</div>
@@ -246,7 +271,7 @@ export default function Dashboard({
                 </div>
               </div>
 
-              <div onClick={() => setCurrentView('documentation')} style={styles.actionItem} className="glass-card-hover">
+              <div onClick={() => navigate('/documentation')} style={styles.actionItem} className="glass-card-hover">
                 <Shield size={20} color="var(--primary-light)" />
                 <div>
                   <div style={styles.actionTitle}>Usage Analytics</div>
@@ -346,6 +371,8 @@ const styles = {
     margin: '0 auto',
     padding: '40px 24px 80px 24px',
     width: '100%',
+    height: '100%',
+    overflowY: 'auto',
   },
   header: {
     marginBottom: '32px',

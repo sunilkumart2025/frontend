@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle } from 'lucide-react';
-import { login as apiLogin } from '../../services/api';
+import { Mail, Lock, Eye, EyeOff, CheckCircle2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { login as apiLogin, verifyOtp } from '../../services/api';
 
-export default function SignIn({ setCurrentView, login, showToast }) {
+export default function SignIn({ navigate, login, showToast, redirectPath }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [error, setError] = useState('');
+  
+  // OTP State
+  const [showOTP, setShowOTP] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,12 +38,58 @@ export default function SignIn({ setCurrentView, login, showToast }) {
           api_key: data.api_key,
           access_token: data.access_token,
         });
-        setCurrentView('dashboard');
+        navigate(redirectPath || '/dashboard');
       }, 1200);
 
     } catch (err) {
-      setError(err.message || 'Invalid email or password. Please try again.');
-      showToast(err.message || 'Login failed', 'error');
+      const msg = err.message || 'Invalid email or password. Please try again.';
+      setError(msg);
+      showToast(msg, 'error');
+      
+      // If the error indicates email is not verified, show OTP screen
+      if (msg.toLowerCase().includes('verified') || msg.toLowerCase().includes('otp')) {
+        setShowOTP(true);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyOTP = async (e) => {
+    e.preventDefault();
+    if (otpCode.length < 6) {
+      setError('Please enter a 6-digit OTP code.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      await verifyOtp(email, otpCode);
+      showToast('Email verified successfully! Logging you in...', 'success');
+
+      // Try logging in again now that they are verified
+      const data = await apiLogin(email, password);
+
+      setLoginSuccess(true);
+      sessionStorage.setItem('access_token', data.access_token);
+      sessionStorage.setItem('api_key', data.api_key);
+
+      setTimeout(() => {
+        login({
+          name: email.split('@')[0].split('.').map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(' '),
+          email: email,
+          api_key: data.api_key,
+          access_token: data.access_token,
+        });
+        navigate(redirectPath || '/dashboard');
+      }, 1200);
+
+    } catch (err) {
+      const msg = err.message || 'OTP verification failed. Please try again.';
+      setError(msg);
+      showToast(msg, 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -48,100 +98,156 @@ export default function SignIn({ setCurrentView, login, showToast }) {
   return (
     <div style={styles.page} className="animate-fade-in">
       <div style={styles.card} className="glass-card">
-        <h2 style={styles.title}>Welcome Back</h2>
-        <p style={styles.sub}>Sign in to access your Conversa API dashboard</p>
+        <h2 style={styles.title}>{showOTP ? 'Verify Email' : 'Welcome Back'}</h2>
+        <p style={styles.sub}>
+          {showOTP 
+            ? `Please enter the verification code sent to ${email}`
+            : 'Sign in to access your Conversa API dashboard'}
+        </p>
 
-        <form onSubmit={handleSubmit} style={styles.form}>
-          {/* Email */}
-          <div className="form-group">
-            <label className="form-label">Email Address</label>
-            <div style={styles.inputWrapper}>
-              <Mail size={16} color="var(--text-muted)" style={styles.inputIcon} />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="form-input"
-                style={styles.input}
-              />
+        {!showOTP ? (
+          <form onSubmit={handleSubmit} style={styles.form}>
+            {/* Email */}
+            <div className="form-group">
+              <label className="form-label">Email Address</label>
+              <div style={styles.inputWrapper}>
+                <Mail size={16} color="var(--text-muted)" style={styles.inputIcon} />
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="form-input"
+                  style={styles.input}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* Password */}
-          <div className="form-group">
-            <label className="form-label">Password</label>
-            <div style={styles.inputWrapper}>
-              <Lock size={16} color="var(--text-muted)" style={styles.inputIcon} />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="form-input"
-                style={styles.input}
-              />
+            {/* Password */}
+            <div className="form-group">
+              <label className="form-label">Password</label>
+              <div style={styles.inputWrapper}>
+                <Lock size={16} color="var(--text-muted)" style={styles.inputIcon} />
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  className="form-input"
+                  style={styles.input}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={styles.eyeBtn}
+                  className="auth-eye-btn"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {/* Options */}
+            <div style={styles.optionsRow}>
+              <label style={styles.checkboxLabel}>
+                <input type="checkbox" style={styles.checkbox} />
+                <span>Remember me</span>
+              </label>
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={styles.eyeBtn}
-                className="auth-eye-btn"
+                onClick={() => showToast('Password reset coming soon.', 'info')}
+                style={styles.linkBtn}
+                className="auth-link-btn"
               >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                Forgot password?
               </button>
             </div>
-          </div>
 
-          {/* Options */}
-          <div style={styles.optionsRow}>
-            <label style={styles.checkboxLabel}>
-              <input type="checkbox" style={styles.checkbox} />
-              <span>Remember me</span>
-            </label>
+            {/* Error Banner */}
+            {error && (
+              <div style={styles.errorBanner} className="animate-fade-in">
+                <AlertCircle size={16} color="#ef4444" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Success Banner */}
+            {loginSuccess && (
+              <div style={styles.successBanner} className="animate-fade-in">
+                <CheckCircle2 size={16} color="var(--success)" />
+                <span>Login successful! Redirecting...</span>
+              </div>
+            )}
+
             <button
-              type="button"
-              onClick={() => showToast('Password reset coming soon.', 'info')}
-              style={styles.linkBtn}
-              className="auth-link-btn"
+              type="submit"
+              disabled={isSubmitting || loginSuccess}
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '12px', marginTop: '10px' }}
             >
-              Forgot password?
+              {isSubmitting ? 'Signing In...' : loginSuccess ? 'Redirecting...' : 'Sign In'}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOTP} style={styles.form} className="animate-fade-in">
+            <div className="form-group" style={{ textAlign: 'center' }}>
+              <ShieldCheck size={48} color="var(--primary)" style={{ margin: '0 auto 16px auto' }} />
+              <label className="form-label">Enter 6-digit Verification Code</label>
+              <input
+                type="text"
+                required
+                maxLength={6}
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
+                placeholder="0 0 0 0 0 0"
+                className="form-input"
+                style={{ textAlign: 'center', fontSize: '1.5rem', letterSpacing: '0.5em', fontWeight: 'bold', padding: '16px' }}
+              />
+            </div>
+
+            {/* Error Banner */}
+            {error && (
+              <div style={styles.errorBanner} className="animate-fade-in">
+                <AlertCircle size={16} color="#ef4444" />
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Success Banner */}
+            {loginSuccess && (
+              <div style={styles.successBanner} className="animate-fade-in">
+                <CheckCircle2 size={16} color="var(--success)" />
+                <span>Verified & logged in! Redirecting...</span>
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isSubmitting || otpCode.length < 6 || loginSuccess}
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '12px', marginTop: '12px' }}
+            >
+              {isSubmitting ? 'Verifying...' : 'Verify & Sign In'}
+            </button>
+            
+            <div style={{ textAlign: 'center', marginTop: '16px' }}>
+              <button type="button" onClick={() => showToast('New code sent', 'info')} className="auth-link-btn" style={styles.linkBtn}>
+                Resend Code
+              </button>
+            </div>
+          </form>
+        )}
+
+        {!showOTP && (
+          <div style={styles.footer}>
+            Don't have an account?{' '}
+            <button onClick={() => navigate('/signup')} style={styles.linkBtn} className="auth-link-btn">
+              Create one
             </button>
           </div>
-
-          {/* Error Banner */}
-          {error && (
-            <div style={styles.errorBanner} className="animate-fade-in">
-              <AlertCircle size={16} color="#ef4444" />
-              <span>{error}</span>
-            </div>
-          )}
-
-          {/* Success Banner */}
-          {loginSuccess && (
-            <div style={styles.successBanner} className="animate-fade-in">
-              <CheckCircle2 size={16} color="var(--success)" />
-              <span>Login successful! Redirecting to dashboard...</span>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={isSubmitting || loginSuccess}
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '12px', marginTop: '10px' }}
-          >
-            {isSubmitting ? 'Signing In...' : loginSuccess ? 'Redirecting...' : 'Sign In'}
-          </button>
-        </form>
-
-        <div style={styles.footer}>
-          Don't have an account?{' '}
-          <button onClick={() => setCurrentView('signup')} style={styles.linkBtn} className="auth-link-btn">
-            Create one
-          </button>
-        </div>
+        )}
       </div>
 
       {/* Stats Bottom Strip */}

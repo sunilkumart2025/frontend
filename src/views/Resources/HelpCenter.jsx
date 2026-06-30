@@ -10,17 +10,17 @@ import {
   Minus
 } from 'lucide-react';
 
-export default function HelpCenter({ setCurrentView, showToast }) {
+export default function HelpCenter({ navigate, showToast }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFaq, setActiveFaq] = useState(null);
 
   const categories = [
-    { title: 'Getting Started', desc: 'Learn the basics and set up your account', icon: PlayIcon, action: 'signup' },
-    { title: 'API Documentation', desc: 'Explore reference endpoints and SDKs', icon: BookOpen, action: 'documentation' },
-    { title: 'Billing & Plans', desc: 'Pricing plans, usage metrics, and subscriptions', icon: CreditCard, action: 'home' },
-    { title: 'Security & Privacy', desc: 'SOC 2, GDPR, data retention policies', icon: Lock, action: 'about-us' },
-    { title: 'Troubleshooting', desc: 'Common issues, audio format errors, and transcribing timeouts', icon: AlertTriangle, action: 'contact' },
-    { title: 'Account Management', desc: 'Profiles, billing details, and API keys', icon: User, action: 'signin' }
+    { title: 'Getting Started', desc: 'Learn the basics and set up your account', icon: PlayIcon, action: '/signup' },
+    { title: 'API Documentation', desc: 'Explore reference endpoints and SDKs', icon: BookOpen, action: '/documentation' },
+    { title: 'Billing & Plans', desc: 'Pricing plans, usage metrics, and subscriptions', icon: CreditCard, action: '/' },
+    { title: 'Security & Privacy', desc: 'SOC 2, GDPR, data retention policies', icon: Lock, action: '/about-us' },
+    { title: 'Troubleshooting', desc: 'Common issues, audio format errors, and transcribing timeouts', icon: AlertTriangle, action: '/contact' },
+    { title: 'Account Management', desc: 'Profiles, billing details, and API keys', icon: User, action: '/dashboard' }
   ];
 
   const faqs = [
@@ -41,8 +41,7 @@ export default function HelpCenter({ setCurrentView, showToast }) {
   );
 
   const handleCategoryClick = (action) => {
-    setCurrentView(action);
-    window.scrollTo(0,0);
+    navigate(action);
   };
 
   return (
@@ -133,10 +132,10 @@ export default function HelpCenter({ setCurrentView, showToast }) {
           <h3 style={styles.ctaTitle}>Still need help?</h3>
           <p style={styles.ctaDesc}>Can't find what you're looking for? Our developer support team is here to help you succeed.</p>
           <div style={styles.ctaBtns}>
-            <button onClick={() => setCurrentView('contact')} className="btn btn-primary">
+            <button onClick={() => navigate('/contact')} className="btn btn-primary">
               Contact Support
             </button>
-            <button onClick={() => setCurrentView('documentation')} className="btn btn-outline">
+            <button onClick={() => navigate('/documentation')} className="btn btn-outline">
               View Documentation
             </button>
           </div>

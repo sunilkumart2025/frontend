@@ -20,7 +20,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
-export default function LandingPage({ setCurrentView, showToast }) {
+export default function LandingPage({ navigate, showToast }) {
   const [activeFaq, setActiveFaq] = useState(null);
 
   const toggleFaq = (index) => {
@@ -28,14 +28,12 @@ export default function LandingPage({ setCurrentView, showToast }) {
   };
 
   const startTrial = () => {
-    setCurrentView('signup');
+    navigate('/signup');
     showToast('Starting your 14-day trial account setup!', 'info');
-    window.scrollTo(0, 0);
   };
 
   const viewApiDocs = () => {
-    setCurrentView('documentation');
-    window.scrollTo(0, 0);
+    navigate('/documentation');
   };
 
   const faqs = [
@@ -373,7 +371,7 @@ export default function LandingPage({ setCurrentView, showToast }) {
             <button onClick={startTrial} className="btn btn-primary" style={{ padding: '14px 28px', fontSize: '1.05rem' }}>
               Start Your Free Trial
             </button>
-            <button onClick={() => setCurrentView('contact')} className="btn btn-outline" style={{ padding: '14px 28px', fontSize: '1.05rem' }}>
+            <button onClick={() => navigate('/contact')} className="btn btn-outline" style={{ padding: '14px 28px', fontSize: '1.05rem' }}>
               Contact Sales
             </button>
           </div>

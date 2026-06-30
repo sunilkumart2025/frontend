@@ -2,48 +2,29 @@ import React, { useState } from 'react';
 import { 
   FileText, 
   ChevronDown, 
-  LayoutDashboard, 
-  History as HistoryIcon, 
   HelpCircle, 
   Activity, 
   Info, 
   Mail, 
-  LogOut, 
-  User,
   Menu,
   X,
-  Volume2,
-  Mic
+  Volume2
 } from 'lucide-react';
 
-export default function Navbar({ currentView, setCurrentView, user, logout, showToast }) {
+export default function Navbar({ currentPath, navigate, user, logout, showToast }) {
   const [resourcesOpen, setResourcesOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const resourcesLeaveTimer = React.useRef(null);
-  const servicesLeaveTimer = React.useRef(null);
 
-  const navigate = (view) => {
-    setCurrentView(view);
+  const navigateTo = (path) => {
+    navigate(path);
     setResourcesOpen(false);
-    setServicesOpen(false);
     setMobileMenuOpen(false);
-    window.scrollTo(0, 0);
   };
 
   const handleLogoutClick = () => {
     logout();
     showToast('Logged out successfully', 'success');
-    navigate('home');
-  };
-
-  // Services dropdown hover handlers with delay to prevent premature close
-  const onServicesEnter = () => {
-    if (servicesLeaveTimer.current) clearTimeout(servicesLeaveTimer.current);
-    setServicesOpen(true);
-  };
-  const onServicesLeave = () => {
-    servicesLeaveTimer.current = setTimeout(() => setServicesOpen(false), 150);
   };
 
   // Resources dropdown hover handlers with delay
@@ -55,11 +36,14 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
     resourcesLeaveTimer.current = setTimeout(() => setResourcesOpen(false), 150);
   };
 
+  // Helper to standardise active route checks
+  const cleanPath = currentPath.toLowerCase().trim();
+
   return (
     <nav style={styles.nav}>
       <div style={styles.navContainer}>
         {/* Brand Logo */}
-        <div onClick={() => navigate('home')} className="navbar-brand">
+        <div onClick={() => navigateTo('/')} className="navbar-brand">
           <div style={styles.logoIcon}>
             <Volume2 size={18} color="#ffffff" fill="#ffffff" />
           </div>
@@ -68,82 +52,20 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
 
         {/* Desktop Menu */}
         <div style={styles.navLinks} className="nav-links-desktop">
-          {user ? (
-            /* Logged In Navbar */
-            <>
-              <button 
-                onClick={() => navigate('dashboard')} 
-                style={{...styles.navLink, ...(currentView === 'dashboard' ? styles.navLinkActive : {})}}
-              >
-                <LayoutDashboard size={16} />
-                Dashboard
-              </button>
-              
-              <button 
-                onClick={() => navigate('documentation')} 
-                style={{...styles.navLink, ...(currentView === 'documentation' || currentView === 'api-reference' ? styles.navLinkActive : {})}}
-              >
-                <FileText size={16} />
-                Documentation
-              </button>
-
-              <button 
-                onClick={() => navigate('history')} 
-                style={{...styles.navLink, ...(currentView === 'history' ? styles.navLinkActive : {})}}
-              >
-                <HistoryIcon size={16} />
-                History
-              </button>
-
-              {/* Services Dropdown */}
-              <div 
-                style={styles.dropdownContainer}
-                onMouseEnter={onServicesEnter}
-                onMouseLeave={onServicesLeave}
-              >
-                <button style={{...styles.navLink, ...((currentView === 'voice-tools' || currentView === 'voice-tools-tts' || currentView === 'voice-tools-stt') ? styles.navLinkActive : {})}}>
-                  <Volume2 size={16} />
-                  Services
-                  <ChevronDown size={14} style={{ transform: servicesOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
-                </button>
-                {servicesOpen && (
-                  <div style={styles.dropdownMenu} className="animate-fade-in">
-                    <div onMouseDown={() => navigate('voice-tools-tts')} style={styles.dropdownItem}>
-                      <Volume2 size={16} color="#8b5cf6" />
-                      <div>
-                        <div style={styles.dropdownItemTitle}>Text to Speech</div>
-                        <div style={styles.dropdownItemDesc}>Convert text to audio</div>
-                      </div>
-                    </div>
-                    <div onMouseDown={() => navigate('voice-tools-stt')} style={styles.dropdownItem}>
-                      <Mic size={16} color="#ec4899" />
-                      <div>
-                        <div style={styles.dropdownItemTitle}>Speech to Text</div>
-                        <div style={styles.dropdownItemDesc}>Transcribe voice to text</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            /* Logged Out Navbar */
-            <>
-              <button 
-                onClick={() => navigate('home')} 
-                style={{...styles.navLink, ...(currentView === 'home' ? styles.navLinkActive : {})}}
-              >
-                Home
-              </button>
-              
-              <button 
-                onClick={() => navigate('documentation')} 
-                style={{...styles.navLink, ...(currentView === 'documentation' || currentView === 'api-reference' ? styles.navLinkActive : {})}}
-              >
-                Documentation
-              </button>
-            </>
-          )}
+          <button 
+            onClick={() => navigateTo('/')} 
+            style={{...styles.navLink, ...(cleanPath === '/' || cleanPath === '/home' ? styles.navLinkActive : {})}}
+          >
+            Home
+          </button>
+          
+          <button 
+            onClick={() => navigateTo('/documentation')} 
+            style={{...styles.navLink, ...((cleanPath === '/documentation' || cleanPath === '/api-reference') ? styles.navLinkActive : {})}}
+          >
+            <FileText size={16} />
+            Documentation
+          </button>
 
           {/* Resources Dropdown (Shared) */}
           <div 
@@ -153,35 +75,35 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
           >
             <button style={{
               ...styles.navLink, 
-              ...((['help-center', 'system-status', 'about-us', 'contact'].includes(currentView)) ? styles.navLinkActive : {})
+              ...((['/help-center', '/system-status', '/about-us', '/contact'].includes(cleanPath)) ? styles.navLinkActive : {})
             }}>
               Resources
               <ChevronDown size={14} style={{ transform: resourcesOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
             </button>
             {resourcesOpen && (
               <div style={styles.dropdownMenu} className="animate-fade-in">
-                <div onMouseDown={() => navigate('help-center')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigateTo('/help-center')} style={styles.dropdownItem}>
                   <HelpCircle size={16} color="#3b82f6" />
                   <div>
                     <div style={styles.dropdownItemTitle}>Help Center</div>
                     <div style={styles.dropdownItemDesc}>Guides & FAQ support</div>
                   </div>
                 </div>
-                <div onMouseDown={() => navigate('system-status')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigateTo('/system-status')} style={styles.dropdownItem}>
                   <Activity size={16} color="#10b981" />
                   <div>
                     <div style={styles.dropdownItemTitle}>System Status</div>
                     <div style={styles.dropdownItemDesc}>Real-time uptime metrics</div>
                   </div>
                 </div>
-                <div onMouseDown={() => navigate('about-us')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigateTo('/about-us')} style={styles.dropdownItem}>
                   <Info size={16} color="#f59e0b" />
                   <div>
                     <div style={styles.dropdownItemTitle}>About Us</div>
                     <div style={styles.dropdownItemDesc}>Our story & values</div>
                   </div>
                 </div>
-                <div onMouseDown={() => navigate('contact')} style={styles.dropdownItem}>
+                <div onMouseDown={() => navigateTo('/contact')} style={styles.dropdownItem}>
                   <Mail size={16} color="#ec4899" />
                   <div>
                     <div style={styles.dropdownItemTitle}>Contact</div>
@@ -193,27 +115,18 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
           </div>
         </div>
 
-        {/* Auth Buttons / Profile info */}
+        {/* Auth Buttons / Go To App */}
         <div style={styles.authSection} className="auth-section-desktop">
           {user ? (
-            <div style={styles.userProfile}>
-              <div style={styles.userAvatar}>
-                <User size={16} />
-              </div>
-              <div style={styles.userDetails}>
-                <div style={styles.userName}>{user.name || 'Varish Tomar'}</div>
-                <div style={styles.userEmail}>{user.email || 'varish.tomar1303@gmail.com'}</div>
-              </div>
-              <button onClick={handleLogoutClick} style={styles.logoutBtn} title="Sign Out">
-                <LogOut size={16} />
-              </button>
-            </div>
+            <button onClick={() => navigateTo('/chat')} className="btn btn-primary" style={styles.getStartedBtn}>
+              Go to App
+            </button>
           ) : (
             <>
-              <button onClick={() => navigate('signin')} style={styles.signInBtn}>
+              <button onClick={() => navigateTo('/signin')} style={styles.signInBtn}>
                 Sign In
               </button>
-              <button onClick={() => navigate('signup')} className="btn btn-primary" style={styles.getStartedBtn}>
+              <button onClick={() => navigateTo('/signup')} className="btn btn-primary" style={styles.getStartedBtn}>
                 Get Started
               </button>
             </>
@@ -229,44 +142,21 @@ export default function Navbar({ currentView, setCurrentView, user, logout, show
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div style={styles.mobileMenu} className="animate-fade-in">
-          {user ? (
-            <>
-              <div style={styles.mobileProfile}>
-                <div style={styles.userAvatar}>
-                  <User size={18} />
-                </div>
-                <div style={styles.userDetails}>
-                  <div style={styles.userName}>{user.name}</div>
-                  <div style={styles.userEmail}>{user.email}</div>
-                </div>
-              </div>
-              <hr style={styles.mobileDivider} />
-              <button onClick={() => navigate('dashboard')} style={styles.mobileNavLink}>Dashboard</button>
-              <button onClick={() => navigate('documentation')} style={styles.mobileNavLink}>Documentation</button>
-              <button onClick={() => navigate('history')} style={styles.mobileNavLink}>History</button>
-              <button onClick={() => navigate('voice-tools')} style={styles.mobileNavLink}>Voice Tools Hub</button>
-              <button onClick={() => navigate('voice-tools-tts')} style={styles.mobileNavLink}>Text to Speech</button>
-              <button onClick={() => navigate('voice-tools-stt')} style={styles.mobileNavLink}>Speech to Text</button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => navigate('home')} style={styles.mobileNavLink}>Home</button>
-              <button onClick={() => navigate('documentation')} style={styles.mobileNavLink}>Documentation</button>
-            </>
-          )}
+          <button onClick={() => navigateTo('/')} style={styles.mobileNavLink}>Home</button>
+          <button onClick={() => navigateTo('/documentation')} style={styles.mobileNavLink}>Documentation</button>
           <hr style={styles.mobileDivider} />
-          <button onClick={() => navigate('help-center')} style={styles.mobileNavLink}>Help Center</button>
-          <button onClick={() => navigate('system-status')} style={styles.mobileNavLink}>System Status</button>
-          <button onClick={() => navigate('about-us')} style={styles.mobileNavLink}>About Us</button>
-          <button onClick={() => navigate('contact')} style={styles.mobileNavLink}>Contact</button>
+          <button onClick={() => navigateTo('/help-center')} style={styles.mobileNavLink}>Help Center</button>
+          <button onClick={() => navigateTo('/system-status')} style={styles.mobileNavLink}>System Status</button>
+          <button onClick={() => navigateTo('/about-us')} style={styles.mobileNavLink}>About Us</button>
+          <button onClick={() => navigateTo('/contact')} style={styles.mobileNavLink}>Contact</button>
           
           <hr style={styles.mobileDivider} />
           {user ? (
-            <button onClick={handleLogoutClick} style={{...styles.mobileNavLink, color: '#ef4444'}}>Sign Out</button>
+            <button onClick={() => navigateTo('/chat')} className="btn btn-primary" style={{width: '100%'}}>Go to App</button>
           ) : (
             <div style={styles.mobileAuthBtns}>
-              <button onClick={() => navigate('signin')} style={styles.mobileSignInBtn}>Sign In</button>
-              <button onClick={() => navigate('signup')} className="btn btn-primary" style={{width: '100%'}}>Get Started</button>
+              <button onClick={() => navigateTo('/signin')} style={styles.mobileSignInBtn}>Sign In</button>
+              <button onClick={() => navigateTo('/signup')} className="btn btn-primary" style={{width: '100%'}}>Get Started</button>
             </div>
           )}
         </div>
@@ -389,51 +279,6 @@ const styles = {
     padding: '8px 18px',
     fontSize: '0.9rem',
   },
-  userProfile: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    background: 'rgba(255, 255, 255, 0.03)',
-    border: '1px solid var(--border-color)',
-    padding: '6px 12px',
-    borderRadius: '40px',
-  },
-  userAvatar: {
-    width: '28px',
-    height: '28px',
-    borderRadius: '50%',
-    background: 'var(--primary)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#ffffff',
-  },
-  userDetails: {
-    textAlign: 'left',
-  },
-  userName: {
-    fontSize: '0.85rem',
-    fontWeight: '600',
-    color: 'var(--text-primary)',
-    lineHeight: '1.2',
-  },
-  userEmail: {
-    fontSize: '0.72rem',
-    color: 'var(--text-muted)',
-    lineHeight: '1.2',
-  },
-  logoutBtn: {
-    background: 'transparent',
-    border: 'none',
-    color: 'var(--text-muted)',
-    cursor: 'pointer',
-    padding: '4px',
-    borderRadius: '4px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'var(--transition)',
-  },
   mobileMenuToggle: {
     background: 'transparent',
     border: 'none',
@@ -454,12 +299,6 @@ const styles = {
     gap: '12px',
     boxShadow: '0 10px 20px rgba(0,0,0,0.5)',
     zIndex: 99,
-  },
-  mobileProfile: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '12px',
-    padding: '8px 0',
   },
   mobileDivider: {
     border: 'none',
@@ -493,4 +332,3 @@ const styles = {
     cursor: 'pointer',
   }
 };
-

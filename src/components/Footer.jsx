@@ -1,19 +1,14 @@
 import React from 'react';
 import { Volume2 } from 'lucide-react';
 
-export default function Footer({ setCurrentView }) {
-  const navigate = (view) => {
-    setCurrentView(view);
-    window.scrollTo(0, 0);
-  };
-
+export default function Footer({ navigate }) {
   return (
     <footer style={styles.footer}>
       <div style={styles.container}>
         <div style={styles.grid}>
           {/* Logo & Description */}
           <div style={styles.brandCol} className="footer-brand-col-responsive">
-            <div onClick={() => navigate('home')} style={styles.logo} className="navbar-brand">
+            <div onClick={() => navigate('/')} style={styles.logo} className="navbar-brand">
               <div style={styles.logoIcon}>
                 <Volume2 size={16} color="#ffffff" fill="#ffffff" />
               </div>
@@ -28,10 +23,10 @@ export default function Footer({ setCurrentView }) {
           <div style={styles.linksCol}>
             <h4 style={styles.title}>Product</h4>
             <ul style={styles.list}>
-              <li><button onClick={() => navigate('voice-tools')} style={styles.link} className="footer-link-hover">Text to Speech</button></li>
-              <li><button onClick={() => navigate('voice-tools')} style={styles.link} className="footer-link-hover">Speech to Text</button></li>
-              <li><button onClick={() => navigate('documentation')} style={styles.link} className="footer-link-hover">API Docs</button></li>
-              <li><button onClick={() => navigate('home')} style={styles.link} className="footer-link-hover">Pricing Plan</button></li>
+              <li><button onClick={() => navigate('/services/tts')} style={styles.link} className="footer-link-hover">Text to Speech</button></li>
+              <li><button onClick={() => navigate('/services/stt')} style={styles.link} className="footer-link-hover">Speech to Text</button></li>
+              <li><button onClick={() => navigate('/documentation')} style={styles.link} className="footer-link-hover">API Docs</button></li>
+              <li><button onClick={() => navigate('/')} style={styles.link} className="footer-link-hover">Pricing Plan</button></li>
             </ul>
           </div>
 
@@ -39,10 +34,10 @@ export default function Footer({ setCurrentView }) {
           <div style={styles.linksCol}>
             <h4 style={styles.title}>Support</h4>
             <ul style={styles.list}>
-              <li><button onClick={() => navigate('help-center')} style={styles.link} className="footer-link-hover">Help Center</button></li>
-              <li><button onClick={() => navigate('contact')} style={styles.link} className="footer-link-hover">Contact Sales</button></li>
-              <li><button onClick={() => navigate('system-status')} style={styles.link} className="footer-link-hover">System Status</button></li>
-              <li><button onClick={() => navigate('about-us')} style={styles.link} className="footer-link-hover">About Us</button></li>
+              <li><button onClick={() => navigate('/help-center')} style={styles.link} className="footer-link-hover">Help Center</button></li>
+              <li><button onClick={() => navigate('/contact')} style={styles.link} className="footer-link-hover">Contact Sales</button></li>
+              <li><button onClick={() => navigate('/system-status')} style={styles.link} className="footer-link-hover">System Status</button></li>
+              <li><button onClick={() => navigate('/about-us')} style={styles.link} className="footer-link-hover">About Us</button></li>
             </ul>
           </div>
 

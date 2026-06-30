@@ -7,7 +7,7 @@ import {
   Radio
 } from 'lucide-react';
 
-export default function ApiReference({ setCurrentView, showToast }) {
+export default function ApiReference({ navigate, showToast }) {
   const [activeEndpoint, setActiveEndpoint] = useState('auth-login');
   const [clientTab, setClientTab] = useState('body'); // 'headers' | 'body'
   const [isSending, setIsSending] = useState(false);
@@ -227,7 +227,7 @@ export default function ApiReference({ setCurrentView, showToast }) {
     <div style={styles.page}>
       {/* Back Header */}
       <div style={styles.header}>
-        <button onClick={() => setCurrentView('documentation')} style={styles.backBtn} className="api-back-btn">
+        <button onClick={() => navigate('/documentation')} style={styles.backBtn} className="api-back-btn">
           <ArrowLeft size={16} /> Back to Documentation
         </button>
         <span style={styles.headerInfo}>Base URL: <code>https://api.conversa.ai/v1</code></span>

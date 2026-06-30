@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Sidebar from './components/Sidebar';
+import { getProfile } from './services/api';
 
 // Views
 import LandingPage from './views/LandingPage';
@@ -16,10 +18,55 @@ import Dashboard from './views/Dashboard';
 import History from './views/History';
 import VoiceTools from './views/VoiceTools';
 
+// New Views
+import Chat from './views/Chat';
+import Translate from './views/Translate';
+import Profile from './views/Resources/Profile';
+import Settings from './views/Resources/Settings';
+
 export default function App() {
-  const [currentView, setCurrentView] = useState('home');
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [user, setUser] = useState(null);
   const [toasts, setToasts] = useState([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(!!sessionStorage.getItem('access_token'));
+
+  // Sync state with browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      setCurrentPath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Session Recovery
+  useEffect(() => {
+    const token = sessionStorage.getItem('access_token');
+    const storedApiKey = sessionStorage.getItem('api_key');
+    if (token && !user) {
+      getProfile(token)
+        .then(profile => {
+          setUser({ ...profile, api_key: storedApiKey || profile.api_key });
+        })
+        .catch(err => {
+          console.error('Session recovery failed:', err);
+          sessionStorage.removeItem('access_token');
+        })
+        .finally(() => {
+          setIsRestoring(false);
+        });
+    } else {
+      setIsRestoring(false);
+    }
+  }, []);
+
+  // Centralized navigation helper
+  const navigate = (path) => {
+    window.history.pushState(null, '', path);
+    setCurrentPath(path);
+    window.scrollTo(0, 0);
+  };
 
   // Centralized API keys state
   const [apiKeys, setApiKeys] = useState([
@@ -33,15 +80,15 @@ export default function App() {
     }
   ]);
 
-  // Centralized History Log matching video data
-  const [historyData, setHistoryData] = useState([
-    { id: 1, name: 'welcome_prompt.wav', type: 'Text to Speech', submitted: '6/13/2026, 6:34:45 PM', time: '4.5s', status: 'Completed' },
-    { id: 2, name: 'meeting_minutes.mp3', type: 'Speech to Text', submitted: '6/13/2026, 10:48:38 AM', time: '120.2s', status: 'Completed' },
-    { id: 3, name: 'interactive_ivr.wav', type: 'Text to Speech', submitted: '6/13/2026, 10:40:34 AM', time: '12.8s', status: 'Completed' },
-    { id: 4, name: 'call_center_log_04.mp3', type: 'Speech to Text', submitted: '6/13/2026, 10:43:02 AM', time: '345.1s', status: 'Completed' },
-    { id: 5, name: 'podcast_episode_12.mp3', type: 'Speech to Text', submitted: '6/13/2026, 10:41:20 AM', time: '1800.5s', status: 'Completed' },
-    { id: 6, name: 'checkout_confirm.wav', type: 'Text to Speech', submitted: '6/13/2026, 10:40:02 AM', time: '3.1s', status: 'Completed' }
-  ]);
+  // Initialize History Log from localStorage
+  const [historyData, setHistoryData] = useState(() => {
+    const local = localStorage.getItem('conversa_history');
+    return local ? JSON.parse(local) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('conversa_history', JSON.stringify(historyData));
+  }, [historyData]);
 
   const login = (userData) => {
     setUser(userData);
@@ -51,6 +98,7 @@ export default function App() {
     setUser(null);
     sessionStorage.removeItem('access_token');
     sessionStorage.removeItem('api_key');
+    navigate('/');
   };
 
   // Toast notifications manager
@@ -68,31 +116,52 @@ export default function App() {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
+  const toggleSidebar = () => setIsSidebarCollapsed(!isSidebarCollapsed);
+
   // Route resolver helper
   const renderView = () => {
-    switch (currentView) {
-      case 'home':
-        return <LandingPage setCurrentView={setCurrentView} showToast={showToast} />;
-      case 'documentation':
-        return <Documentation setCurrentView={setCurrentView} showToast={showToast} />;
-      case 'api-reference':
-        return <ApiReference setCurrentView={setCurrentView} showToast={showToast} />;
-      case 'help-center':
-        return <HelpCenter setCurrentView={setCurrentView} showToast={showToast} />;
-      case 'system-status':
+    if (isRestoring) return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', color: 'var(--text-secondary)' }}>Restoring session...</div>;
+
+    // Normalise pathname
+    let path = currentPath.toLowerCase().trim();
+    if (path.length > 1 && path.endsWith('/')) {
+      path = path.slice(0, -1);
+    }
+
+    // Protected Route Redirect to Sign In
+    const protectedPaths = ['/dashboard', '/history', '/services', '/services/hub', '/services/tts', '/services/stt', '/chat', '/translate', '/profile', '/settings'];
+    const isProtected = protectedPaths.some(p => path === p || path.startsWith('/chat/'));
+
+    if (isProtected && !user) {
+      return <SignIn navigate={navigate} login={login} showToast={showToast} redirectPath={path} />;
+    }
+
+    switch (true) {
+      case path === '/':
+      case path === '/home':
+        return <LandingPage navigate={navigate} showToast={showToast} />;
+      case path === '/documentation':
+        return <Documentation navigate={navigate} showToast={showToast} />;
+      case path === '/api-reference':
+        return <ApiReference navigate={navigate} showToast={showToast} />;
+      case path === '/help-center':
+        return <HelpCenter navigate={navigate} showToast={showToast} />;
+      case path === '/system-status':
         return <SystemStatus showToast={showToast} />;
-      case 'about-us':
-        return <AboutUs setCurrentView={setCurrentView} />;
-      case 'contact':
+      case path === '/about-us':
+        return <AboutUs navigate={navigate} />;
+      case path === '/contact':
         return <Contact showToast={showToast} />;
-      case 'signin':
-        return <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />;
-      case 'signup':
-        return <SignUp setCurrentView={setCurrentView} login={login} showToast={showToast} />;
-      case 'dashboard':
-        return user ? (
+      case path === '/signin':
+        return <SignIn navigate={navigate} login={login} showToast={showToast} />;
+      case path === '/signup':
+        return <SignUp navigate={navigate} login={login} showToast={showToast} />;
+      
+      // Protected Routes below
+      case path === '/dashboard':
+        return (
           <Dashboard 
-            setCurrentView={setCurrentView} 
+            navigate={navigate} 
             user={user}
             apiKeys={apiKeys} 
             setApiKeys={setApiKeys}
@@ -100,40 +169,39 @@ export default function App() {
             setHistoryData={setHistoryData}
             showToast={showToast}
           />
-        ) : (
-          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
         );
-      case 'history':
-        return user ? (
-          <History historyData={historyData} showToast={showToast} />
-        ) : (
-          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
-        );
-      case 'voice-tools':
-        return user ? (
-          <VoiceTools showToast={showToast} defaultSubView="hub" user={user} setHistoryData={setHistoryData} />
-        ) : (
-          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
-        );
-      case 'voice-tools-tts':
-        return user ? (
-          <VoiceTools showToast={showToast} defaultSubView="tts" user={user} setHistoryData={setHistoryData} />
-        ) : (
-          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
-        );
-      case 'voice-tools-stt':
-        return user ? (
-          <VoiceTools showToast={showToast} defaultSubView="stt" user={user} setHistoryData={setHistoryData} />
-        ) : (
-          <SignIn setCurrentView={setCurrentView} login={login} showToast={showToast} />
-        );
+      case path === '/history':
+        return <History historyData={historyData} showToast={showToast} />;
+      case path === '/services':
+      case path === '/services/hub':
+        return <VoiceTools showToast={showToast} defaultSubView="hub" user={user} setHistoryData={setHistoryData} />;
+      case path === '/services/tts':
+        return <VoiceTools showToast={showToast} defaultSubView="tts" user={user} setHistoryData={setHistoryData} />;
+      case path === '/services/stt':
+        return <VoiceTools showToast={showToast} defaultSubView="stt" user={user} setHistoryData={setHistoryData} />;
+      case path === '/chat' || path.startsWith('/chat/'):
+        return <Chat navigate={navigate} user={user} showToast={showToast} currentPath={path} />;
+      case path === '/translate':
+        return <Translate user={user} showToast={showToast} />;
+      case path === '/profile':
+        return <Profile user={user} showToast={showToast} />;
+      case path === '/settings':
+        return <Settings user={user} showToast={showToast} />;
       default:
-        return <LandingPage setCurrentView={setCurrentView} showToast={showToast} />;
+        // 404/Fallback
+        return <LandingPage navigate={navigate} showToast={showToast} />;
     }
   };
 
+  const path = currentPath.toLowerCase().trim();
+  const protectedPaths = ['/dashboard', '/history', '/services', '/services/hub', '/services/tts', '/services/stt', '/chat', '/translate', '/profile', '/settings'];
+  const isProtected = protectedPaths.some(p => path === p || path.startsWith('/chat/'));
+  
+  // Use new Sidebar Layout for logged-in protected routes
+  const useAppLayout = isProtected && user && !isRestoring;
+
   return (
-    <div style={styles.appWrapper}>
+    <div style={useAppLayout ? {} : styles.appWrapper} className={useAppLayout ? "app-container" : ""}>
       {/* Background decoration elements */}
       <div className="bg-glow-wrapper">
         <div className="bg-glow-purple"></div>
@@ -141,22 +209,39 @@ export default function App() {
       </div>
       <div className="bg-grid-overlay"></div>
 
-      {/* Global Navbar */}
-      <Navbar 
-        currentView={currentView} 
-        setCurrentView={setCurrentView} 
-        user={user} 
-        logout={logout}
-        showToast={showToast}
-      />
+      {useAppLayout ? (
+        <>
+          <Sidebar 
+            isCollapsed={isSidebarCollapsed} 
+            toggleSidebar={toggleSidebar} 
+            onSignOut={logout} 
+            navigate={navigate}
+            currentPath={currentPath}
+          />
+          <div className="main-content">
+            {renderView()}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Global Navbar for public pages */}
+          <Navbar 
+            currentPath={currentPath} 
+            navigate={navigate} 
+            user={user} 
+            logout={logout}
+            showToast={showToast}
+          />
 
-      {/* Core Dynamic Content */}
-      <div style={styles.mainContent}>
-        {renderView()}
-      </div>
+          {/* Core Dynamic Content */}
+          <div style={styles.mainContent}>
+            {renderView()}
+          </div>
 
-      {/* Global Footer */}
-      <Footer setCurrentView={setCurrentView} />
+          {/* Global Footer for public pages */}
+          <Footer navigate={navigate} />
+        </>
+      )}
 
       {/* Toast Notification Container */}
       <div style={styles.toastContainer}>

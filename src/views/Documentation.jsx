@@ -11,7 +11,7 @@ import {
   Settings
 } from 'lucide-react';
 
-export default function Documentation({ setCurrentView, showToast }) {
+export default function Documentation({ navigate, showToast }) {
   const [activeSection, setActiveSection] = useState('getting-started');
   const [copiedText, setCopiedText] = useState('');
 
@@ -24,8 +24,7 @@ export default function Documentation({ setCurrentView, showToast }) {
 
   const handleSidebarClick = (sectionId) => {
     if (sectionId === 'api-reference') {
-      setCurrentView('api-reference');
-      window.scrollTo(0,0);
+      navigate('/api-reference');
     } else {
       setActiveSection(sectionId);
     }
@@ -124,10 +123,10 @@ export default function Documentation({ setCurrentView, showToast }) {
                 <h4 style={styles.ctaBoxTitle}>Ready to start processing voice tools?</h4>
                 <p style={styles.ctaBoxDesc}>Create your free account to get instant access to the API and developer dashboard tools.</p>
                 <div style={styles.ctaBoxActions}>
-                  <button onClick={() => setCurrentView('signup')} className="btn btn-primary">
+                  <button onClick={() => navigate('/signup')} className="btn btn-primary">
                     Create Free Account
                   </button>
-                  <button onClick={() => setCurrentView('signin')} className="btn btn-outline">
+                  <button onClick={() => navigate('/dashboard')} className="btn btn-outline">
                     View Dashboard
                   </button>
                 </div>
@@ -138,7 +137,7 @@ export default function Documentation({ setCurrentView, showToast }) {
                   <h4 style={styles.apiRefBoxTitle}>Complete API Reference</h4>
                   <p style={styles.apiRefBoxDesc}>Explore our comprehensive API endpoint sandbox documentation with sample outputs.</p>
                 </div>
-                <button onClick={() => setCurrentView('api-reference')} className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>
+                <button onClick={() => navigate('/api-reference')} className="btn btn-primary" style={{ whiteSpace: 'nowrap' }}>
                   View Full API Reference <ArrowRight size={16} />
                 </button>
               </div>

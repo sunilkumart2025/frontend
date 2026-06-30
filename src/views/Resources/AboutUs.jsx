@@ -1,11 +1,7 @@
 import React from 'react';
 import { Shield, Heart, Award } from 'lucide-react';
 
-export default function AboutUs({ setCurrentView }) {
-  const navigate = (view) => {
-    setCurrentView(view);
-    window.scrollTo(0,0);
-  };
+export default function AboutUs({ navigate }) {
 
   const values = [
     { title: 'Security First', desc: 'Your audio recordings are sacred. We employ enterprise-grade security and encryption measures, ensuring no voice clip or log is stored longer than necessary.', icon: Shield },
@@ -158,8 +154,8 @@ export default function AboutUs({ setCurrentView }) {
           <h2 style={styles.ctaTitle}>Ready to Transform Your Workflow?</h2>
           <p style={styles.ctaDesc}>Join thousands of developers who trust Conversa AI to power their voice-enabled integrations.</p>
           <div style={styles.ctaActions}>
-            <button onClick={() => navigate('signup')} className="btn btn-primary">Start Free Trial</button>
-            <button onClick={() => navigate('contact')} className="btn btn-outline">Contact Sales</button>
+            <button onClick={() => navigate('/signup')} className="btn btn-primary">Start Free Trial</button>
+            <button onClick={() => navigate('/contact')} className="btn btn-outline">Contact Sales</button>
           </div>
         </div>
       </section>
